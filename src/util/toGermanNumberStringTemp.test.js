@@ -9,7 +9,7 @@ describe('util: toGermanNumberStringTemp.js', () => {
     expect(returnValue).toEqual('10,23');
   });
 
-  it('returns a number string with groups of three digits separated by empty space', () => {
+  it('returns a number string with groups of three digits separated by whitespace', () => {
     const value = 1234567;
 
     const returnValue = toGermanNumberStringTemp(value);

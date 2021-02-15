@@ -28,6 +28,7 @@ import EVENTS from '../../events.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import throttle from '../../util/throttle';
 import { getModule } from '../../store/index';
+import toGermanNumberStringTemp from '../../util/toGermanNumberStringTemp.js';
 
 /**
  * @public
@@ -277,7 +278,7 @@ export default class AngleTool extends BaseAnnotationTool {
         toGermanNumberStringTemp(data.rAngle) +
         String.fromCharCode(parseInt(str, 16)) +
         suffix
-        //data.rAngle.toString() + String.fromCharCode(parseInt(str, 16)) + suffix
+        // data.rAngle.toString() + String.fromCharCode(parseInt(str, 16)) + suffix
       );
     }
 

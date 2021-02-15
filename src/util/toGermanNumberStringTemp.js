@@ -1,23 +1,13 @@
 /**
  * Temporary solution for german string formatting.
  * Should be replaced by proper localization.
+ * @param {*} value
  */
-
-const numberFormatOptions = {
-  maximumFractionDigits: 2,
-  minimumFractionDigits: 2,
-};
-
 export default function(value) {
-  //var result = value.toLocaleString('de-DE') + 'xcv';
-  //const result = isNaN(value);
-
-  // replace comma
-  //result = result.replace('.', ' ');
   const result = value
-    .toFixed(2) // always two decimal digits
-    .replace('.', ',') // replace decimal point character with ,
-    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1 ');
+    .toFixed(2)
+    .replace('.', ',') // replace decimal point separator
+    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1 '); // apply grouping of three digits with whitespace
 
   return result;
 }
