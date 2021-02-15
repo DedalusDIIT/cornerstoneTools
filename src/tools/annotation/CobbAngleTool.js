@@ -28,6 +28,7 @@ import triggerEvent from '../../util/triggerEvent.js';
 import throttle from '../../util/throttle';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import { getModule } from '../../store/index';
+import toGermanStringTemp from '../../util/toGermanStringTemp.js';
 
 /**
  * @public
@@ -386,8 +387,14 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       const str = '00B0'; // Degrees symbol
 
       return (
-        rAngle.toString() + String.fromCharCode(parseInt(str, 16)) + suffix
+        toGermanStringTemp(rAngle) +
+        String.fromCharCode(parseInt(str, 16)) +
+        suffix
       );
+
+      /*return (
+        rAngle.toString() + String.fromCharCode(parseInt(str, 16)) + suffix
+      );*/
     }
   }
 
