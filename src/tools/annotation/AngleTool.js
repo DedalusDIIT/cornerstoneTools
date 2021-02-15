@@ -274,7 +274,10 @@ export default class AngleTool extends BaseAnnotationTool {
       const str = '00B0'; // Degrees symbol
 
       return (
-        data.rAngle.toString() + String.fromCharCode(parseInt(str, 16)) + suffix
+        toGermanStringTemp(data.rAngle) +
+        String.fromCharCode(parseInt(str, 16)) +
+        suffix
+        //data.rAngle.toString() + String.fromCharCode(parseInt(str, 16)) + suffix
       );
     }
 
