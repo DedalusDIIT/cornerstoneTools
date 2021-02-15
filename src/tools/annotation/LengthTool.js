@@ -18,7 +18,7 @@ import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import throttle from '../../util/throttle';
 import { getModule } from '../../store/index';
-import toGermanStringTemp from '../../util/toGermanStringTemp.js';
+import toGermanNumberStringTemp from '../../util/toGermanNumberStringTemp.js';
 
 const logger = getLogger('tools:annotation:LengthTool');
 
@@ -268,7 +268,7 @@ export default class LengthTool extends BaseAnnotationTool {
       annotation.unit = suffix;
 
       return (
-        toGermanStringTemp(measuredValue) +
+        toGermanNumberStringTemp(measuredValue) +
         ` ${suffix}` /*`${measuredValue.toFixed(2)} ${suffix}`*/
       );
     }
