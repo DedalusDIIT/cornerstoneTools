@@ -370,10 +370,8 @@ function _createTextBoxContent(
     const hasStandardUptakeValues = meanStdDevSUV && meanStdDevSUV.mean !== 0;
     const unit = _getUnit(modality, options.showHounsfieldUnits);
 
-    let meanString = `Mean: ${numbersWithCommas(mean.toFixed(2))} ${unit}`;
-    const stdDevString = `Std Dev: ${numbersWithCommas(
-      stdDev.toFixed(2)
-    )} ${unit}`;
+    let meanString = `avg: ${toGermanStringTemp(mean)} ${unit}`; // `Mean: ${numbersWithCommas(mean.toFixed(2))} ${unit}`;
+    const stdDevString = `sd: ${toGermanStringTemp(stdDev)} ${unit}`; //`Std Dev: ${numbersWithCommas(stdDev.toFixed(2))} ${unit}`;
 
     // If this image has SUV values to display, concatenate them to the text line
     if (hasStandardUptakeValues) {
@@ -434,7 +432,7 @@ function _formatArea(area, hasPixelSpacing) {
     ? ` mm${String.fromCharCode(178)}`
     : ` px${String.fromCharCode(178)}`;
 
-  return `Area: ${numbersWithCommas(area.toFixed(2))}${suffix}`;
+  return `A: ${toGermanStringTemp(area)} ${suffix}`; //`Area: ${numbersWithCommas(area.toFixed(2))}${suffix}`;
 }
 
 /**

@@ -387,14 +387,10 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       const str = '00B0'; // Degrees symbol
 
       return (
-        toGermanStringTemp(rAngle) +
+        toGermanStringTemp(rAngle) /*rAngle.toString()*/ +
         String.fromCharCode(parseInt(str, 16)) +
         suffix
       );
-
-      /*return (
-        rAngle.toString() + String.fromCharCode(parseInt(str, 16)) + suffix
-      );*/
     }
   }
 
