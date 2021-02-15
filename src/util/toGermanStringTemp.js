@@ -2,17 +2,17 @@
  * Temporary solution for german string formatting.
  * Should be replaced by proper localization.
  */
+
+const numberFormatOptions = {
+  maximumFractionDigits: 2,
+  minimumFractionDigits: 2,
+};
+
 export default function(value) {
-  if (!Number.isNaN(value)) {
-    return formatNumber(value);
-  }
+  var result = new Intl.NumberFormat('de-DE', numberFormatOptions).format(
+    value
+  );
+  result = result.replace('.', ' ');
 
-  return formatString(value);
+  return result;
 }
-
-const numberFormatOptions = {};
-function formatNumber(value) {
-  return new Intl.NumberFormat('de-DE', numberFormatOptions).format(value);
-}
-
-function formatString(value) {}
