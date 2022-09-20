@@ -423,9 +423,6 @@ export {
   version,
 };
 
-// Keeping the console for now to check whether the updates are seen on viewer deployment
-console.log('DVISA-221_measurement rounding version', 6);
-
 export { default as import } from './importInternal.js';
 
 export default cornerstoneTools;

@@ -183,7 +183,6 @@ describe('LengthTool.js', () => {
       };
 
       instantiatedTool.updateCachedStats(image, element, data);
-      console.log(data.length);
       expect(data.length).toEqual(new Decimal(50.9));
 
       data.handles.start.x = 138.74809160305347;

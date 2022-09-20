@@ -273,7 +273,7 @@ export default class LengthTool extends BaseAnnotationTool {
     // - SideEffect: Updates annotation 'suffix'
     function textBoxText(annotation, rowPixelSpacing, colPixelSpacing) {
       const measuredValue = _sanitizeMeasuredValue(annotation.length);
-      const digitCount = annotation.digits;
+
       // Measured value is not defined, return empty string
 
       if (!measuredValue) {
