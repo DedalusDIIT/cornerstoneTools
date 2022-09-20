@@ -26,6 +26,8 @@ import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import { getModule } from '../../store/index';
 import toGermanNumberStringTemp from '../../util/toGermanNumberStringTemp.js';
+import decimal from 'decimal.js';
+import * as rounding from '../../util/measurementUncertaintyTool.js';
 
 const logger = getLogger('tools:annotation:RectangleRoiTool');
 
@@ -344,8 +346,25 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     roiCoordinates.width * 2 * (pixelSpacing.colPixelSpacing || 1) +
     roiCoordinates.height * 2 * (pixelSpacing.rowPixelSpacing || 1);
 
+  // Pixel diagonal
+  const pixelDiagonal = pixelSpacing.colPixelSpacing
+    ? decimal(
+        pixelSpacing.colPixelSpacing * pixelSpacing.colPixelSpacing +
+          pixelSpacing.rowPixelSpacing * pixelSpacing.rowPixelSpacing
+      ).sqrt()
+    : decimal.sqrt(2);
+
+  const uncertainty = perimeter * pixelDiagonal;
+
+  const [roundedArea, roundedDigits] = rounding.roundValue(area, uncertainty);
+
+  const [roundedUncertainty, roundedUncertaintyDigits] = rounding.roundValue(
+    uncertainty,
+    uncertainty
+  );
+
   return {
-    area: area || 0,
+    area: roundedArea || 0,
     perimeter,
     count: roiMeanStdDev.count || 0,
     mean: roiMeanStdDev.mean || 0,
@@ -354,6 +373,7 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     min: roiMeanStdDev.min || 0,
     max: roiMeanStdDev.max || 0,
     meanStdDevSUV,
+    uncertainty: roundedUncertainty,
   };
 }
 
@@ -457,7 +477,9 @@ function _formatArea(area, hasPixelSpacing) {
     ? ` mm${String.fromCharCode(178)}`
     : ` px${String.fromCharCode(178)}`;
 
-  return `A: ${toGermanNumberStringTemp(area)} ${suffix}`; //`Area: ${numbersWithCommas(area.toFixed(2))}${suffix}`;
+  // TODO: Localisation!!
+  return `A: ${area} ${suffix}`;
+  // `A: {toGermanNumberStringTemp(area)} ${suffix}`;
 }
 
 function _getUnit(modality, showHounsfieldUnits) {
@@ -479,7 +501,7 @@ function _getUnit(modality, showHounsfieldUnits) {
 function _createTextBoxContent(
   context,
   isColorImage,
-  { area, mean, stdDev, min, max, meanStdDevSUV },
+  { area, uncertainty, mean, stdDev, min, max, meanStdDevSUV },
   modality,
   hasPixelSpacing,
   options = {}
@@ -493,8 +515,8 @@ function _createTextBoxContent(
     const hasStandardUptakeValues = meanStdDevSUV && meanStdDevSUV.mean !== 0;
     const unit = _getUnit(modality, options.showHounsfieldUnits);
 
-    let meanString = `avg: ${toGermanNumberStringTemp(mean)} ${unit}`; //`Mean: ${numbersWithCommas(mean.toFixed(2))} ${unit}`;
-    const stdDevString = `sd: ${toGermanNumberStringTemp(stdDev)} ${unit}`; //`Std Dev: ${numbersWithCommas(stdDev.toFixed(2))} ${unit}`;
+    let meanString = `avg: ${toGermanNumberStringTemp(mean)} ${unit}`; // `Mean: ${numbersWithCommas(mean.toFixed(2))} ${unit}`;
+    const stdDevString = `sd: ${toGermanNumberStringTemp(stdDev)} ${unit}`; // `Std Dev: ${numbersWithCommas(stdDev.toFixed(2))} ${unit}`;
 
     // If this image has SUV values to display, concatenate them to the text line
     if (hasStandardUptakeValues) {

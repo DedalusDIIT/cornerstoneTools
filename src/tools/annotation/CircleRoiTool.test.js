@@ -5,6 +5,7 @@ import getNewContextMocked from '../../drawing/getNewContext.js';
 import Tool from './CircleRoiTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 import { getLogger } from '../../util/logger.js';
+import Decimal from 'decimal.js';
 
 /* ~ Setup
  * To mock properly, Jest needs jest.mock('moduleName') to be in the
@@ -317,7 +318,7 @@ describe('CircleRoiTool.js', () => {
       };
 
       instantiatedTool.updateCachedStats(image, element, data);
-      expect(data.cachedStats.area.toFixed(2)).toEqual('5.07');
+      expect(data.cachedStats.area).toEqual(new Decimal(5));
       expect(data.cachedStats.radius.toFixed(2)).toEqual('1.27');
       expect(data.cachedStats.perimeter.toFixed(2)).toEqual('7.98');
       expect(data.cachedStats.mean.toFixed(2)).toEqual('4.50');
@@ -329,7 +330,7 @@ describe('CircleRoiTool.js', () => {
       data.handles.end.y = 5;
 
       instantiatedTool.updateCachedStats(image, element, data);
-      expect(data.cachedStats.area.toFixed(2)).toEqual('20.29');
+      expect(data.cachedStats.area).toEqual(new Decimal(20));
       expect(data.cachedStats.mean.toFixed(2)).toEqual('47.86');
       expect(data.cachedStats.stdDev.toFixed(2)).toEqual('47.60');
     });

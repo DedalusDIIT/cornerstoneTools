@@ -28,6 +28,8 @@ import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import { circleRoiCursor } from '../cursors/index.js';
 import getCircleCoords from '../../util/getCircleCoords';
+import decimal from 'decimal.js';
+import * as rounding from '../../util/measurementUncertaintyTool.js';
 
 const logger = getLogger('tools:annotation:CircleRoiTool');
 
@@ -384,8 +386,8 @@ function _createTextBoxContent(
     const hasStandardUptakeValues = meanStdDevSUV && meanStdDevSUV.mean !== 0;
     const unit = _getUnit(modality, options.showHounsfieldUnits);
 
-    let meanString = `avg: ${toGermanNumberStringTemp(mean)} ${unit}`; //`Mean: ${numbersWithCommas(mean.toFixed(2))} ${unit}`;
-    const stdDevString = `sd: ${toGermanNumberStringTemp(stdDev)} ${unit}`; //`Std Dev: ${numbersWithCommas(stdDev.toFixed(2))} ${unit}`;
+    let meanString = `avg: ${toGermanNumberStringTemp(mean)} ${unit}`; // `Mean: ${numbersWithCommas(mean.toFixed(2))} ${unit}`;
+    const stdDevString = `sd: ${toGermanNumberStringTemp(stdDev)} ${unit}`; // `Std Dev: ${numbersWithCommas(stdDev.toFixed(2))} ${unit}`;
 
     // If this image has SUV values to display, concatenate them to the text line
     if (hasStandardUptakeValues) {
@@ -452,7 +454,8 @@ function _formatArea(area, hasPixelSpacing) {
     ? ` mm${String.fromCharCode(178)}`
     : ` px${String.fromCharCode(178)}`;
 
-  return `A: ${toGermanNumberStringTemp(area)} ${suffix}`; //`Area: ${numbersWithCommas(area.toFixed(2))}${suffix}`;
+  // TODO: localisation!
+  return `A: ${toGermanNumberStringTemp(area)} ${suffix}`; // `Area: ${numbersWithCommas(area.toFixed(2))}${suffix}`;
 }
 
 function _formatLength(value, name, hasPixelSpacing) {
@@ -507,6 +510,17 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
       ((pixelSpacing && pixelSpacing.colPixelSpacing) || 1)) /
     2;
   const perimeter = 2 * Math.PI * radius;
+
+  // Pixel diagonal
+  const pixelDiagonal = pixelSpacing.colPixelSpacing
+    ? decimal(
+        pixelSpacing.colPixelSpacing * pixelSpacing.colPixelSpacing +
+          pixelSpacing.rowPixelSpacing * pixelSpacing.rowPixelSpacing
+      ).sqrt()
+    : decimal.sqrt(2);
+
+  const uncertainty = perimeter * pixelDiagonal;
+
   const area =
     Math.PI *
     ((circleCoordinates.width *
@@ -516,8 +530,14 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
       ((pixelSpacing && pixelSpacing.rowPixelSpacing) || 1)) /
       2);
 
+  const [roundedArea, roundedDigits] = rounding.roundValue(area, uncertainty);
+  const [roundedUncertainty, roundedUncertaintyDigits] = rounding.roundValue(
+    uncertainty,
+    uncertainty
+  );
+
   return {
-    area: area || 0,
+    area: roundedArea || 0,
     radius: radius || 0,
     perimeter: perimeter || 0,
     count: ellipseMeanStdDev.count || 0,
@@ -527,5 +547,6 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     min: ellipseMeanStdDev.min || 0,
     max: ellipseMeanStdDev.max || 0,
     meanStdDevSUV,
+    uncertainty: roundedUncertainty,
   };
 }

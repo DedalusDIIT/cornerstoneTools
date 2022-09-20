@@ -128,7 +128,6 @@ export default class LengthTool extends BaseAnnotationTool {
   updateCachedStats(image, element, data) {
     const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
-    console.log(rowPixelSpacing, colPixelSpacing);
     // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
     const dx =
       (data.handles.end.x - data.handles.start.x) * (colPixelSpacing || 1);
@@ -145,8 +144,6 @@ export default class LengthTool extends BaseAnnotationTool {
         ).sqrt()
       : decimal.sqrt(2);
 
-    console.log(`Uncertainty value: ${uncertainty}`);
-
     // Store the length inside the tool for outside access
     const [roundedLength, roundedDigits] = rounding.roundValue(
       length,
@@ -156,9 +153,6 @@ export default class LengthTool extends BaseAnnotationTool {
       uncertainty,
       uncertainty
     );
-
-    console.log(`rounded value: ${roundedLength}`);
-    console.log(`digit count: ${roundedDigits}`);
 
     data.invalidated = false;
     data.uncertainty = roundedUncertainty;
@@ -296,10 +290,6 @@ export default class LengthTool extends BaseAnnotationTool {
       annotation.unit = suffix;
 
       // TODO: localisation need to be added!
-      // Return `${toGermanNumberStringTemp(
-      //   measuredValue,
-      //   digitCount
-      // )} ${suffix} +/- ${annotation.uncertainty}`;
       return `${measuredValue} ${suffix} +/- ${annotation.uncertainty}`;
     }
 

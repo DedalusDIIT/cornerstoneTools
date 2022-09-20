@@ -1,6 +1,7 @@
 import RectangleRoiTool from './RectangleRoiTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 import { getLogger } from '../../util/logger.js';
+import Decimal from 'decimal.js';
 
 jest.mock('../../util/logger.js');
 jest.mock('./../../stateManagement/toolState.js', () => ({
@@ -200,7 +201,7 @@ describe('RectangleRoiTool.js', () => {
       };
 
       instantiatedTool.updateCachedStats(image, element, data);
-      expect(data.cachedStats.area.toFixed(2)).toEqual('7.26');
+      expect(data.cachedStats.area).toEqual(new Decimal(7));
       expect(data.cachedStats.perimeter.toFixed(2)).toEqual('10.78');
       expect(data.cachedStats.mean.toFixed(2)).toEqual('57.56');
       expect(data.cachedStats.stdDev.toFixed(2)).toEqual('47.46');
@@ -211,7 +212,7 @@ describe('RectangleRoiTool.js', () => {
       data.handles.end.y = 2;
 
       instantiatedTool.updateCachedStats(image, element, data);
-      expect(data.cachedStats.area.toFixed(2)).toEqual('4.84');
+      expect(data.cachedStats.area).toEqual(new Decimal(5));
       expect(data.cachedStats.mean.toFixed(2)).toEqual('68.17');
       expect(data.cachedStats.stdDev.toFixed(2)).toEqual('45.02');
     });

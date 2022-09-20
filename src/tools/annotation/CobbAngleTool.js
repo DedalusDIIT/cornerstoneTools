@@ -28,7 +28,6 @@ import triggerEvent from '../../util/triggerEvent.js';
 import throttle from '../../util/throttle';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import { getModule } from '../../store/index';
-import toGermanNumberStringTemp from '../../util/toGermanNumberStringTemp.js';
 
 /**
  * @public
@@ -160,7 +159,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
 
     angle *= 180 / Math.PI;
 
-    data.rAngle = roundToDecimal(angle, 2);
+    data.rAngle = roundToDecimal(angle, 1);
     data.invalidated = false;
   }
 
@@ -405,7 +404,8 @@ export default class CobbAngleTool extends BaseAnnotationTool {
 
     const suffix = !rowPixelSpacing || !colPixelSpacing ? ' (isotropic)' : '';
 
-    return `${toGermanNumberStringTemp(rAngle)}\u00B0${suffix}`;
+    // TODO: Localisation!
+    return `${rAngle}\u00B0${suffix}`;
   }
 
   activeCallback(element) {
