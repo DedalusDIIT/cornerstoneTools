@@ -37,19 +37,19 @@ describe('localization utils', () => {
     beforeAll(async () => await localization.initializeLocalization('en-US'));
 
     it('should localize using space grouping', () => {
-      expect(localization.localizeNumber(num1)).toBe('1 000 000.09');
+      expect(localization.localizeNumber(num1)).toBe('1 000 000,09');
     });
 
     it('should localize adding 0s to complete decimal part', () => {
-      expect(localization.localizeNumber(num2)).toBe('1 000 000.90');
+      expect(localization.localizeNumber(num2)).toBe('1 000 000,90');
     });
 
     it('should localize adding previously inexisting decimal part', () => {
-      expect(localization.localizeNumber(num3)).toBe('1 000 000.00');
+      expect(localization.localizeNumber(num3)).toBe('1 000 000,00');
     });
 
     it('should localize decimal numbers', () => {
-      expect(localization.localizeNumber(num4)).toBe('0.012');
+      expect(localization.localizeNumber(num4)).toBe('0,012');
     });
   });
 

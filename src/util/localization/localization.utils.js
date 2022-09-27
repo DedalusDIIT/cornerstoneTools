@@ -39,6 +39,7 @@ const charsToEscape = [
 ];
 
 let _numberGroupCharRegExp = null;
+let _decimalMark = null;
 
 /**
  * Initializes localization functionality. It is ready when the returned promise resolves.
@@ -47,6 +48,7 @@ let _numberGroupCharRegExp = null;
  */
 export const initializeLocalization = (lng = 'en') => {
   _numberGroupCharRegExp = null;
+  _decimalMark = null;
 
   return i18next.init({
     lng,
@@ -72,7 +74,9 @@ export const localizeNumber = value => {
       formatParams: { val: { minimumFractionDigits: 2 } },
     }) || '';
 
-  return localizedNumber.replace(_getNumberGroupCharRegExp(), ' ');
+  return localizedNumber
+    .replace(_getNumberGroupCharRegExp(), ' ')
+    .replace(_getDecimalMark(), ',');
 };
 
 /**
@@ -105,4 +109,14 @@ const _getNumberGroupCharRegExp = () => {
   }
 
   return _numberGroupCharRegExp;
+};
+
+const _getDecimalMark = () => {
+  if (_decimalMark === null) {
+    const num = i18next.t('intlNumber', { val: 1.1 });
+
+    _decimalMark = num.charAt(1);
+  }
+
+  return _decimalMark;
 };
