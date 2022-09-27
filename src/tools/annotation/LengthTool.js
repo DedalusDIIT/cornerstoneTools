@@ -18,9 +18,8 @@ import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import throttle from '../../util/throttle';
 import { getModule } from '../../store/index';
-import toGermanNumberStringTemp from '../../util/toGermanNumberStringTemp.js';
-import decimal from 'decimal.js';
-import * as rounding from '../../util/measurementUncertaintyTool.js';
+import * as measurementUncertainty from '../../util/measurementUncertaintyTool.js';
+import roundToDecimal from '../../util/roundToDecimal.js';
 
 const logger = getLogger('tools:annotation:LengthTool');
 
@@ -137,27 +136,25 @@ export default class LengthTool extends BaseAnnotationTool {
     // Calculate the length, and create the text variable with the millimeters or pixels suffix
     const length = Math.sqrt(dx * dx + dy * dy);
 
-    // Pixel diagonal
-    const uncertainty = colPixelSpacing
-      ? decimal(
-          colPixelSpacing * colPixelSpacing + rowPixelSpacing * rowPixelSpacing
-        ).sqrt()
-      : decimal.sqrt(2);
+    const uncertainty = measurementUncertainty.getPixelDiagonal(
+      colPixelSpacing,
+      rowPixelSpacing
+    );
 
-    // Store the length inside the tool for outside access
-    const [roundedLength, roundedDigits] = rounding.roundValue(
-      length,
-      uncertainty
-    );
-    const [roundedUncertainty, roundedUncertaintyDigits] = rounding.roundValue(
-      uncertainty,
-      uncertainty
-    );
+    const roundedLength = colPixelSpacing
+      ? measurementUncertainty.roundValueBasedOnUncertainty(length, uncertainty)
+      : roundToDecimal(length, 1);
+
+    const roundedUncertainty = colPixelSpacing
+      ? measurementUncertainty.roundValueBasedOnUncertainty(
+          uncertainty,
+          uncertainty
+        )
+      : roundToDecimal(uncertainty, 1);
 
     data.invalidated = false;
-    data.uncertainty = roundedUncertainty;
     data.length = roundedLength;
-    data.digits = roundedDigits;
+    data.uncertainty = roundedUncertainty;
   }
 
   renderToolData(evt) {
@@ -289,7 +286,6 @@ export default class LengthTool extends BaseAnnotationTool {
 
       annotation.unit = suffix;
 
-      // TODO: localisation need to be added!
       return `${measuredValue} ${suffix} +/- ${annotation.uncertainty}`;
     }
 

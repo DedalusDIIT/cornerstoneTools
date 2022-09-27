@@ -26,8 +26,7 @@ import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import { getModule } from '../../store/index';
 import toGermanNumberStringTemp from '../../util/toGermanNumberStringTemp.js';
-import decimal from 'decimal.js';
-import * as rounding from '../../util/measurementUncertaintyTool.js';
+import * as measurementUncertainty from '../../util/measurementUncertaintyTool.js';
 
 const logger = getLogger('tools:annotation:RectangleRoiTool');
 
@@ -346,19 +345,18 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     roiCoordinates.width * 2 * (pixelSpacing.colPixelSpacing || 1) +
     roiCoordinates.height * 2 * (pixelSpacing.rowPixelSpacing || 1);
 
-  // Pixel diagonal
-  const pixelDiagonal = pixelSpacing.colPixelSpacing
-    ? decimal(
-        pixelSpacing.colPixelSpacing * pixelSpacing.colPixelSpacing +
-          pixelSpacing.rowPixelSpacing * pixelSpacing.rowPixelSpacing
-      ).sqrt()
-    : decimal.sqrt(2);
-
+  const pixelDiagonal = measurementUncertainty.getPixelDiagonal(
+    pixelSpacing.colPixelSpacing,
+    pixelSpacing.rowPixelSpacing
+  );
   const uncertainty = perimeter * pixelDiagonal;
 
-  const [roundedArea, roundedDigits] = rounding.roundValue(area, uncertainty);
+  const roundedArea = measurementUncertainty.roundValueBasedOnUncertainty(
+    area,
+    uncertainty
+  );
 
-  const [roundedUncertainty, roundedUncertaintyDigits] = rounding.roundValue(
+  const roundedUncertainty = measurementUncertainty.roundValueBasedOnUncertainty(
     uncertainty,
     uncertainty
   );
@@ -477,9 +475,7 @@ function _formatArea(area, hasPixelSpacing) {
     ? ` mm${String.fromCharCode(178)}`
     : ` px${String.fromCharCode(178)}`;
 
-  // TODO: Localisation!!
   return `A: ${area} ${suffix}`;
-  // `A: {toGermanNumberStringTemp(area)} ${suffix}`;
 }
 
 function _getUnit(modality, showHounsfieldUnits) {
@@ -515,8 +511,8 @@ function _createTextBoxContent(
     const hasStandardUptakeValues = meanStdDevSUV && meanStdDevSUV.mean !== 0;
     const unit = _getUnit(modality, options.showHounsfieldUnits);
 
-    let meanString = `avg: ${toGermanNumberStringTemp(mean)} ${unit}`; // `Mean: ${numbersWithCommas(mean.toFixed(2))} ${unit}`;
-    const stdDevString = `sd: ${toGermanNumberStringTemp(stdDev)} ${unit}`; // `Std Dev: ${numbersWithCommas(stdDev.toFixed(2))} ${unit}`;
+    let meanString = `avg: ${toGermanNumberStringTemp(mean)} ${unit}`;
+    const stdDevString = `sd: ${toGermanNumberStringTemp(stdDev)} ${unit}`;
 
     // If this image has SUV values to display, concatenate them to the text line
     if (hasStandardUptakeValues) {
