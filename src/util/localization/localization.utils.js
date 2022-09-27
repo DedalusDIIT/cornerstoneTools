@@ -1,14 +1,22 @@
 /* eslint-disable import/extensions */
 import i18next from 'i18next';
-import en from '../../../locale/en.json';
 import de from '../../../locale/de.json';
+import en from '../../../locale/en.json';
+import fr from '../../../locale/fr.json';
+import pt from '../../../locale/pt.json';
 
 const resources = {
+  de: {
+    translation: de,
+  },
   en: {
     translation: en,
   },
-  de: {
-    translation: de,
+  fr: {
+    translation: fr,
+  },
+  pt: {
+    translation: pt,
   },
 };
 
@@ -66,6 +74,13 @@ export const localizeNumber = value => {
 
   return localizedNumber.replace(_getNumberGroupCharRegExp(), ' ');
 };
+
+/**
+ * Translates text values
+ * @param {string} key Translation key
+ * @returns {string} Translated key
+ */
+export const translate = key => i18next.t(key);
 
 const _escapeCharacter = character => {
   let result = character;

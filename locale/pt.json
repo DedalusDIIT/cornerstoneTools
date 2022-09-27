@@ -1,7 +1,7 @@
 {
   "intlNumber": "{{ val, number(useGrouping: always) }}",
   "area": "A",
-  "circumference": "C",
-  "average": "avg",
+  "circumference": "E",
+  "average": "méd.",
   "standardDeviation": "sd"
 }

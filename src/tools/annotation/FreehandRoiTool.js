@@ -521,13 +521,13 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
 
         // Create a line of text to display the mean and any units that were specified (i.e. HU)
 
-        let meanText = `avg: ${localization.localizeNumber(
-          meanStdDev.mean
-        )} ${moSuffix}`;
+        let meanText = `${localization.translate(
+          'average'
+        )}: ${localization.localizeNumber(meanStdDev.mean)} ${moSuffix}`;
         // Create a line of text to display the standard deviation and any units that were specified (i.e. HU)
-        let stdDevText = `sd: ${localization.localizeNumber(
-          meanStdDev.stdDev
-        )} ${moSuffix}`;
+        let stdDevText = `${localization.translate(
+          'standardDeviation'
+        )}: ${localization.localizeNumber(meanStdDev.stdDev)} ${moSuffix}`;
 
         // If this image has SUV values to display, concatenate them to the text line
         if (meanStdDevSUV && meanStdDevSUV.mean !== undefined) {
@@ -558,7 +558,9 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
         }
 
         // Create a line of text to display the area and its units
-        const areaText = `A: ${localization.localizeNumber(area)} ${suffix}`;
+        const areaText = `${localization.translate(
+          'area'
+        )}: ${localization.localizeNumber(area)} ${suffix}`;
 
         // Add this text line to the array to be displayed in the textbox
         textLines.push(areaText);
