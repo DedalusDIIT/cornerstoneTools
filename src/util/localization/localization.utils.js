@@ -1,0 +1,93 @@
+/* eslint-disable import/extensions */
+import i18next from 'i18next';
+import en from '../../../locale/en.json';
+import de from '../../../locale/de.json';
+
+const resources = {
+  en: {
+    translation: en,
+  },
+  de: {
+    translation: de,
+  },
+};
+
+const charsToEscape = [
+  '.',
+  '^',
+  '$',
+  '*',
+  '+',
+  '-',
+  '?',
+  '(',
+  ')',
+  '[',
+  ']',
+  '{',
+  '}',
+  '\\',
+  '|',
+];
+
+let _numberGroupCharRegExp = null;
+
+/**
+ * Initializes localization functionality. It is ready when the returned promise resolves.
+ * @param {string} lng Language code. I.e. "en-US"
+ * @returns {Promise<TFunction>}
+ */
+export const initializeLocalization = (lng = 'en') => {
+  _numberGroupCharRegExp = null;
+
+  return i18next.init({
+    lng,
+    resources,
+  });
+};
+
+/**
+ * Applies localization to a numerical value
+ * @param {number} value Numerical value
+ * @returns {string} localized value
+ */
+export const localizeNumber = value => {
+  if (!i18next.isInitialized) {
+    throw Error(
+      'The localization library is not initialized. i18next needs to be initialized in order to localize numbers.'
+    );
+  }
+
+  const localizedNumber =
+    i18next.t('intlNumber', {
+      val: value,
+      formatParams: { val: { minimumFractionDigits: 2 } },
+    }) || '';
+
+  return localizedNumber.replace(_getNumberGroupCharRegExp(), ' ');
+};
+
+const _escapeCharacter = character => {
+  let result = character;
+
+  if (charsToEscape.includes(character)) {
+    result = `\\${character}`;
+  }
+
+  return result;
+};
+
+const _getGroupingCharacter = () => {
+  const num = i18next.t('intlNumber', { val: 1000 });
+  const groupChar = num.charAt(1);
+
+  return _escapeCharacter(groupChar);
+};
+
+const _getNumberGroupCharRegExp = () => {
+  if (_numberGroupCharRegExp === null) {
+    _numberGroupCharRegExp = new RegExp(_getGroupingCharacter(), 'g');
+  }
+
+  return _numberGroupCharRegExp;
+};

@@ -6,6 +6,8 @@ import Tool from './CircleRoiTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 import { getLogger } from '../../util/logger.js';
 
+import * as localization from '../../util/localization/localization.utils';
+
 /* ~ Setup
  * To mock properly, Jest needs jest.mock('moduleName') to be in the
  * same scope as the require/import statement.
@@ -399,6 +401,9 @@ describe('CircleRoiTool.js', () => {
       const expectDrawWithCenter = color => {
         expect(drawLinkedMocked.mock.calls.length).toBe(2);
       };
+
+      // eslint-disable-next-line no-return-await
+      beforeAll(async () => await localization.initializeLocalization());
 
       it('should draw two circles with the inactive color', () => {
         toolState.data[0].active = false;

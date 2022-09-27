@@ -97,7 +97,8 @@
   },
   "dependencies": {
     "@babel/runtime": "7.1.2",
-    "cornerstone-math": "0.1.10"
+    "cornerstone-math": "0.1.10",
+    "i18next": "21.9.2"
   },
   "files": [
     "dist/cornerstoneTools.js",

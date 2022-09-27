@@ -28,7 +28,7 @@ import triggerEvent from '../../util/triggerEvent.js';
 import throttle from '../../util/throttle';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import { getModule } from '../../store/index';
-import toGermanNumberStringTemp from '../../util/toGermanNumberStringTemp.js';
+import * as localization from '../../util/localization/localization.utils';
 
 /**
  * @public
@@ -405,7 +405,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
 
     const suffix = !rowPixelSpacing || !colPixelSpacing ? ' (isotropic)' : '';
 
-    return `${toGermanNumberStringTemp(rAngle)}\u00B0${suffix}`;
+    return `${localization.localizeNumber(rAngle)}\u00B0${suffix}`;
   }
 
   activeCallback(element) {

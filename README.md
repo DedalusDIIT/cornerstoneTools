@@ -36,7 +36,7 @@
 
 Building one or two tools on top of [Cornerstone.js](https://github.com/cornerstonejs/cornerstone/) is not that difficult. However, as the number of tools grow, you begin to encounter difficult problems:
 
-- Tools should behave and be configurable in a consistant way
+- Tools should behave and be configurable in a consistent way
 - Managing tools across multiple cornerstone `enabled element`s
 - Tools that need knowledge of a fellow tool's state
 - The ability to "drop-in" others' tools, and they "just work"
@@ -121,7 +121,7 @@ If you need to support the `IE11` Browser, you will need to provide polyfills as
   ]
 ```
 
-**Setting up and configuring `cornerstone-tools`'s depency can be the biggest hurdle to getting started. Be sure to check out our docs for assistance.**
+**Setting up and configuring `cornerstone-tools`'s dependency can be the biggest hurdle to getting started. Be sure to check out our docs for assistance.**
 
 > [**Docs**](https://tools.cornerstonejs.org/installation.html)
 
