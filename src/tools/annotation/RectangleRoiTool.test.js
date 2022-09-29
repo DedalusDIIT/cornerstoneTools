@@ -202,6 +202,7 @@ describe('RectangleRoiTool.js', () => {
 
       instantiatedTool.updateCachedStats(image, element, data);
       expect(data.cachedStats.area).toEqual(new Decimal(7));
+      expect(data.cachedStats.uncertainty).toEqual(new Decimal(14));
       expect(data.cachedStats.perimeter.toFixed(2)).toEqual('10.78');
       expect(data.cachedStats.mean.toFixed(2)).toEqual('57.56');
       expect(data.cachedStats.stdDev.toFixed(2)).toEqual('47.46');
@@ -215,6 +216,31 @@ describe('RectangleRoiTool.js', () => {
       expect(data.cachedStats.area).toEqual(new Decimal(5));
       expect(data.cachedStats.mean.toFixed(2)).toEqual('68.17');
       expect(data.cachedStats.stdDev.toFixed(2)).toEqual('45.02');
+    });
+
+    it('should calculate the area and uncertainty based on updated pixelspacing values', () => {
+      const instantiatedTool = new RectangleRoiTool();
+
+      const data = {
+        handles: {
+          start: {
+            x: 3,
+            y: 3,
+          },
+          end: {
+            x: 4,
+            y: 4,
+          },
+        },
+      };
+
+      image.columnPixelSpacing = 0.1234;
+      image.rowPixelSpacing = 1.123;
+
+      instantiatedTool.updateCachedStats(image, element, data);
+      expect(data.cachedStats.area).toEqual(new Decimal(0.1));
+      expect(data.cachedStats.uncertainty).toEqual(new Decimal(2.8));
+      expect(data.cachedStats.perimeter).toEqual(new Decimal(2.4928));
     });
   });
 

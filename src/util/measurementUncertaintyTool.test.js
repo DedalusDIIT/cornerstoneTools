@@ -56,14 +56,18 @@ describe('util: measurementUncertaintyTool.js', () => {
 
   it('returns the index of a first significant figure', () => {
     const uncertainty = 0.32595339539885377778;
-    const firstSFIndex = measurementUncertainty.getThefirstSFIndex(uncertainty);
+    const firstSFIndex = measurementUncertainty.getIndexOfFirstSignificantDigit(
+      uncertainty
+    );
 
     expect(firstSFIndex).toEqual(new Decimal(1));
   });
 
   it('returns the index of a first significant figure', () => {
     const uncertainty = 0.00595339539885377778;
-    const firstSFIndex = measurementUncertainty.getThefirstSFIndex(uncertainty);
+    const firstSFIndex = measurementUncertainty.getIndexOfFirstSignificantDigit(
+      uncertainty
+    );
 
     expect(firstSFIndex).toEqual(new Decimal(3));
   });

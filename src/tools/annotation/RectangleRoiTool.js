@@ -27,6 +27,7 @@ import getPixelSpacing from '../../util/getPixelSpacing';
 import { getModule } from '../../store/index';
 import toGermanNumberStringTemp from '../../util/toGermanNumberStringTemp.js';
 import * as measurementUncertainty from '../../util/measurementUncertaintyTool.js';
+import Decimal from 'decimal.js';
 
 const logger = getLogger('tools:annotation:RectangleRoiTool');
 
@@ -330,8 +331,8 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
 
   if (modality === 'PT') {
     meanStdDevSUV = {
-      mean: calculateSUV(image, roiMeanStdDev.mean, true) || 0,
-      stdDev: calculateSUV(image, roiMeanStdDev.stdDev, true) || 0,
+      mean: new Decimal(calculateSUV(image, roiMeanStdDev.mean, true)) || 0,
+      stdDev: new Decimal(calculateSUV(image, roiMeanStdDev.stdDev, true)) || 0,
     };
   }
 
@@ -341,15 +342,16 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     (pixelSpacing.colPixelSpacing || 1) *
     (roiCoordinates.height * (pixelSpacing.rowPixelSpacing || 1));
 
-  const perimeter =
+  const perimeter = new Decimal(
     roiCoordinates.width * 2 * (pixelSpacing.colPixelSpacing || 1) +
-    roiCoordinates.height * 2 * (pixelSpacing.rowPixelSpacing || 1);
+      roiCoordinates.height * 2 * (pixelSpacing.rowPixelSpacing || 1)
+  );
 
   const pixelDiagonal = measurementUncertainty.getPixelDiagonal(
     pixelSpacing.colPixelSpacing,
     pixelSpacing.rowPixelSpacing
   );
-  const uncertainty = perimeter * pixelDiagonal;
+  const uncertainty = new Decimal(perimeter * pixelDiagonal);
 
   const roundedArea = measurementUncertainty.roundValueBasedOnUncertainty(
     area,
@@ -362,16 +364,16 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
   );
 
   return {
-    area: roundedArea || 0,
+    area: new Decimal(roundedArea) || 0,
     perimeter,
-    count: roiMeanStdDev.count || 0,
-    mean: roiMeanStdDev.mean || 0,
-    variance: roiMeanStdDev.variance || 0,
-    stdDev: roiMeanStdDev.stdDev || 0,
-    min: roiMeanStdDev.min || 0,
-    max: roiMeanStdDev.max || 0,
+    count: new Decimal(roiMeanStdDev.count) || 0,
+    mean: new Decimal(roiMeanStdDev.mean) || 0,
+    variance: new Decimal(roiMeanStdDev.variance) || 0,
+    stdDev: new Decimal(roiMeanStdDev.stdDev) || 0,
+    min: new Decimal(roiMeanStdDev.min) || 0,
+    max: new Decimal(roiMeanStdDev.max) || 0,
     meanStdDevSUV,
-    uncertainty: roundedUncertainty,
+    uncertainty: new Decimal(roundedUncertainty),
   };
 }
 

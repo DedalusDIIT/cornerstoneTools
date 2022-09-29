@@ -29,6 +29,7 @@ import getPixelSpacing from '../../util/getPixelSpacing';
 import { circleRoiCursor } from '../cursors/index.js';
 import getCircleCoords from '../../util/getCircleCoords';
 import * as measurementUncertainty from '../../util/measurementUncertaintyTool.js';
+import Decimal from 'decimal.js';
 
 const logger = getLogger('tools:annotation:CircleRoiTool');
 
@@ -410,7 +411,8 @@ function _createTextBoxContent(
       otherLines.push(`${meanString}${meanSuvString}`);
       otherLines.push(`${stdDevString}     ${stdDevSuvString}`);
     } else {
-      otherLines.push(`${meanString}     ${stdDevString}`);
+      otherLines.push(`${meanString}`);
+      otherLines.push(`${stdDevString}`);
     }
 
     if (showMinMax) {
@@ -498,8 +500,9 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
 
   if (modality === 'PT') {
     meanStdDevSUV = {
-      mean: calculateSUV(image, ellipseMeanStdDev.mean, true) || 0,
-      stdDev: calculateSUV(image, ellipseMeanStdDev.stdDev, true) || 0,
+      mean: new Decimal(calculateSUV(image, ellipseMeanStdDev.mean, true)) || 0,
+      stdDev:
+        new Decimal(calculateSUV(image, ellipseMeanStdDev.stdDev, true)) || 0,
     };
   }
 
@@ -507,14 +510,14 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     (circleCoordinates.width *
       ((pixelSpacing && pixelSpacing.colPixelSpacing) || 1)) /
     2;
-  const perimeter = 2 * Math.PI * radius;
+  const perimeter = new Decimal(2 * Math.PI * radius);
 
   const pixelDiagonal = measurementUncertainty.getPixelDiagonal(
     pixelSpacing.colPixelSpacing,
     pixelSpacing.rowPixelSpacing
   );
 
-  const uncertainty = perimeter * pixelDiagonal;
+  const uncertainty = new Decimal(perimeter * pixelDiagonal);
 
   const area =
     Math.PI *
@@ -535,16 +538,16 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
   );
 
   return {
-    area: roundedArea || 0,
-    radius: radius || 0,
-    perimeter: perimeter || 0,
-    count: ellipseMeanStdDev.count || 0,
-    mean: ellipseMeanStdDev.mean || 0,
-    variance: ellipseMeanStdDev.variance || 0,
-    stdDev: ellipseMeanStdDev.stdDev || 0,
-    min: ellipseMeanStdDev.min || 0,
-    max: ellipseMeanStdDev.max || 0,
+    area: new Decimal(roundedArea) || 0,
+    radius: new Decimal(radius) || 0,
+    perimeter: new Decimal(perimeter) || 0,
+    count: new Decimal(ellipseMeanStdDev.count) || 0,
+    mean: new Decimal(ellipseMeanStdDev.mean) || 0,
+    variance: new Decimal(ellipseMeanStdDev.variance) || 0,
+    stdDev: new Decimal(ellipseMeanStdDev.stdDev) || 0,
+    min: new Decimal(ellipseMeanStdDev.min) || 0,
+    max: new Decimal(ellipseMeanStdDev.max) || 0,
     meanStdDevSUV,
-    uncertainty: roundedUncertainty,
+    uncertainty: new Decimal(roundedUncertainty),
   };
 }

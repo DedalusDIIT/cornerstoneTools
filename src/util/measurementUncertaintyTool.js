@@ -28,33 +28,35 @@ function roundValueBasedOnUncertainty(inputValue, uncertaintyValue) {
     : valueToBeRounded.toNearest(roundingRange);
 }
 
-function getThefirstSFIndex(uncertaintyValue) {
+function getIndexOfFirstSignificantDigit(uncertaintyValue) {
   return Decimal.ceil(-Decimal.log10(uncertaintyValue));
 }
 
 function getRoundingRange(uncertaintyValue) {
   if (uncertaintyValue < 1) {
-    const firstSFIndex = getThefirstSFIndex(uncertaintyValue);
-    const firstSignificantDigitValue = uncertaintyValue
+    const indexOfFirstSignificantDigit = getIndexOfFirstSignificantDigit(
+      uncertaintyValue
+    );
+    const firstSignificantDigit = uncertaintyValue
       .toString()
-      .charAt(firstSFIndex.plus(1));
+      .charAt(indexOfFirstSignificantDigit.plus(1));
 
-    return firstSignificantDigitValue < 3
-      ? parseInt(firstSFIndex.plus(1), 10)
-      : parseInt(firstSFIndex, 10);
+    return firstSignificantDigit < 3
+      ? parseInt(indexOfFirstSignificantDigit.plus(1), 10)
+      : parseInt(indexOfFirstSignificantDigit, 10);
   }
-  const uncertaintyGreaterThanOne = uncertaintyValue.toString().split('.')[0];
-  const powerOf =
-    uncertaintyGreaterThanOne[0] < 3
-      ? uncertaintyGreaterThanOne.length - 2
-      : uncertaintyGreaterThanOne.length - 1;
+  const uncertaintyWholePart = uncertaintyValue.toString().split('.')[0];
+  const uncertaintyWholePartFirstDigit =
+    uncertaintyWholePart[0] < 3
+      ? uncertaintyWholePart.length - 2
+      : uncertaintyWholePart.length - 1;
 
-  return Decimal.pow(10, powerOf);
+  return Decimal.pow(10, uncertaintyWholePartFirstDigit);
 }
 
 export {
   roundValueBasedOnUncertainty,
   getPixelDiagonal,
-  getThefirstSFIndex,
+  getIndexOfFirstSignificantDigit,
   getRoundingRange,
 };

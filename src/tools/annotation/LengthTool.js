@@ -20,6 +20,7 @@ import throttle from '../../util/throttle';
 import { getModule } from '../../store/index';
 import * as measurementUncertainty from '../../util/measurementUncertaintyTool.js';
 import roundToDecimal from '../../util/roundToDecimal.js';
+import Decimal from 'decimal.js';
 
 const logger = getLogger('tools:annotation:LengthTool');
 
@@ -153,8 +154,8 @@ export default class LengthTool extends BaseAnnotationTool {
       : roundToDecimal(uncertainty, 1);
 
     data.invalidated = false;
-    data.length = roundedLength;
-    data.uncertainty = roundedUncertainty;
+    data.length = new Decimal(roundedLength);
+    data.uncertainty = new Decimal(roundedUncertainty);
   }
 
   renderToolData(evt) {
