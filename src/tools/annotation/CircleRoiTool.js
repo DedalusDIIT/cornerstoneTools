@@ -431,12 +431,14 @@ function _createTextBoxContent(
   }
 
   textLines.push(_formatArea(area, hasPixelSpacing));
-  if (radius) {
-    textLines.push(_formatLength(radius, 'Radius', hasPixelSpacing));
-  }
-  if (perimeter) {
-    textLines.push(_formatLength(perimeter, 'Perimeter', hasPixelSpacing));
-  }
+
+  // dedalus: disabled as not needed at this moment
+  // If (radius) {
+  //   textLines.push(_formatLength(radius, 'Radius', hasPixelSpacing));
+  // }
+  // if (perimeter) {
+  //   textLines.push(_formatLength(perimeter, 'Perimeter', hasPixelSpacing));
+  // }
   otherLines.forEach(x => textLines.push(x));
 
   return textLines;
@@ -500,9 +502,8 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
 
   if (modality === 'PT') {
     meanStdDevSUV = {
-      mean: new Decimal(calculateSUV(image, ellipseMeanStdDev.mean, true)) || 0,
-      stdDev:
-        new Decimal(calculateSUV(image, ellipseMeanStdDev.stdDev, true)) || 0,
+      mean: calculateSUV(image, ellipseMeanStdDev.mean, true) || 0,
+      stdDev: calculateSUV(image, ellipseMeanStdDev.stdDev, true) || 0,
     };
   }
 
@@ -528,26 +529,25 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
       ((pixelSpacing && pixelSpacing.rowPixelSpacing) || 1)) /
       2);
 
-  const roundedArea = measurementUncertainty.roundValueBasedOnUncertainty(
-    area,
-    uncertainty
-  );
-  const roundedUncertainty = measurementUncertainty.roundValueBasedOnUncertainty(
-    uncertainty,
-    uncertainty
-  );
+  const roundedArea =
+    measurementUncertainty.roundValueBasedOnUncertainty(area, uncertainty) || 0;
+  const roundedUncertainty =
+    measurementUncertainty.roundValueBasedOnUncertainty(
+      uncertainty,
+      uncertainty
+    ) || 0;
 
   return {
     area: new Decimal(roundedArea) || 0,
     radius: new Decimal(radius) || 0,
     perimeter: new Decimal(perimeter) || 0,
     count: new Decimal(ellipseMeanStdDev.count) || 0,
-    mean: new Decimal(ellipseMeanStdDev.mean) || 0,
+    mean: ellipseMeanStdDev.mean || 0,
     variance: new Decimal(ellipseMeanStdDev.variance) || 0,
-    stdDev: new Decimal(ellipseMeanStdDev.stdDev) || 0,
+    stdDev: ellipseMeanStdDev.stdDev || 0,
     min: new Decimal(ellipseMeanStdDev.min) || 0,
     max: new Decimal(ellipseMeanStdDev.max) || 0,
     meanStdDevSUV,
-    uncertainty: new Decimal(roundedUncertainty),
+    uncertainty: new Decimal(roundedUncertainty) || 0,
   };
 }

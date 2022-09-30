@@ -23,6 +23,10 @@ function roundValueBasedOnUncertainty(inputValue, uncertaintyValue) {
   const valueToBeRounded = new Decimal(inputValue);
   const roundingRange = getRoundingRange(uncertaintyValue);
 
+  if (!valueToBeRounded || !roundingRange) {
+    return;
+  }
+
   return uncertaintyValue < 1
     ? valueToBeRounded.toFixed(roundingRange)
     : valueToBeRounded.toNearest(roundingRange);
@@ -32,6 +36,7 @@ function getIndexOfFirstSignificantDigit(uncertaintyValue) {
   return Decimal.ceil(-Decimal.log10(uncertaintyValue));
 }
 
+// Check any undefined value, safe null check, (e.g. if !null)
 function getRoundingRange(uncertaintyValue) {
   if (uncertaintyValue < 1) {
     const indexOfFirstSignificantDigit = getIndexOfFirstSignificantDigit(

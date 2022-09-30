@@ -353,27 +353,26 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
   );
   const uncertainty = new Decimal(perimeter * pixelDiagonal);
 
-  const roundedArea = measurementUncertainty.roundValueBasedOnUncertainty(
-    area,
-    uncertainty
-  );
+  const roundedArea =
+    measurementUncertainty.roundValueBasedOnUncertainty(area, uncertainty) || 0;
 
-  const roundedUncertainty = measurementUncertainty.roundValueBasedOnUncertainty(
-    uncertainty,
-    uncertainty
-  );
+  const roundedUncertainty =
+    measurementUncertainty.roundValueBasedOnUncertainty(
+      uncertainty,
+      uncertainty
+    ) || 0;
 
   return {
     area: new Decimal(roundedArea) || 0,
     perimeter,
     count: new Decimal(roiMeanStdDev.count) || 0,
-    mean: new Decimal(roiMeanStdDev.mean) || 0,
+    mean: roiMeanStdDev.mean || 0,
     variance: new Decimal(roiMeanStdDev.variance) || 0,
-    stdDev: new Decimal(roiMeanStdDev.stdDev) || 0,
+    stdDev: roiMeanStdDev.stdDev || 0,
     min: new Decimal(roiMeanStdDev.min) || 0,
     max: new Decimal(roiMeanStdDev.max) || 0,
     meanStdDevSUV,
-    uncertainty: new Decimal(roundedUncertainty),
+    uncertainty: new Decimal(roundedUncertainty) || 0,
   };
 }
 
