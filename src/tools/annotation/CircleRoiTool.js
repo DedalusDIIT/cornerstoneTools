@@ -364,6 +364,7 @@ function _createTextBoxContent(
   isColorImage,
   {
     area = 0,
+    uncertainty = 0,
     radius = 0,
     perimeter = 0,
     mean = 0,
@@ -430,7 +431,7 @@ function _createTextBoxContent(
     }
   }
 
-  textLines.push(_formatArea(area, hasPixelSpacing));
+  textLines.push(_formatArea(area, hasPixelSpacing, uncertainty));
 
   // dedalus: disabled as not needed at this moment
   // If (radius) {
@@ -451,13 +452,13 @@ function _createTextBoxContent(
  * @param {*} hasPixelSpacing
  * @returns {string} The formatted label for showing area
  */
-function _formatArea(area, hasPixelSpacing) {
+function _formatArea(area, hasPixelSpacing, uncertainty) {
   // This uses Char code 178 for a superscript 2
   const suffix = hasPixelSpacing
     ? ` mm${String.fromCharCode(178)}`
     : ` px${String.fromCharCode(178)}`;
 
-  return `A: ${area} ${suffix}`;
+  return `A: ${area} ${suffix} +/- ${uncertainty}`;
 }
 
 function _formatLength(value, name, hasPixelSpacing) {

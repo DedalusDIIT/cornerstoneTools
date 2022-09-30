@@ -470,13 +470,13 @@ function _findTextBoxAnchorPoints(startHandle, endHandle) {
  * @param {*} hasPixelSpacing
  * @returns {string} The formatted label for showing area
  */
-function _formatArea(area, hasPixelSpacing) {
+function _formatArea(area, hasPixelSpacing, uncertainty) {
   // This uses Char code 178 for a superscript 2
   const suffix = hasPixelSpacing
     ? ` mm${String.fromCharCode(178)}`
     : ` px${String.fromCharCode(178)}`;
 
-  return `A: ${area} ${suffix}`;
+  return `A: ${area} ${suffix} +/- ${uncertainty}`;
 }
 
 function _getUnit(modality, showHounsfieldUnits) {
@@ -556,7 +556,7 @@ function _createTextBoxContent(
     }
   }
 
-  textLines.push(_formatArea(area, hasPixelSpacing));
+  textLines.push(_formatArea(area, hasPixelSpacing, uncertainty));
   otherLines.forEach(x => textLines.push(x));
 
   return textLines;
