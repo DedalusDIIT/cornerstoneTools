@@ -21,8 +21,6 @@ import {
 import calculateSUV from './../../util/calculateSUV.js';
 import { calculateEllipseStatistics } from './../../util/ellipse/index.js';
 import getROITextBoxCoords from '../../util/getROITextBoxCoords.js';
-import numbersWithCommas from './../../util/numbersWithCommas.js';
-import toGermanNumberStringTemp from './../../util/toGermanNumberStringTemp.js';
 import throttle from './../../util/throttle.js';
 import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
@@ -353,7 +351,7 @@ function _getUnit(modality, showHounsfieldUnits) {
  *
  * @param {*} context
  * @param {*} isColorImage
- * @param {*} { area, mean, stdDev, min, max, meanStdDevSUV }
+ * @param {*} { area, mean, stdDev, min, max, meanStdDevSUV, perimeterUncertainty, areaUncertainty }
  * @param {*} modality
  * @param {*} hasPixelSpacing
  * @param {*} [options={}] - { showMinMax, showHounsfieldUnits }
@@ -364,9 +362,10 @@ function _createTextBoxContent(
   isColorImage,
   {
     area = 0,
-    uncertainty = 0,
+    areaUncertainty = 0,
     radius = 0,
     perimeter = 0,
+    perimeterUncertainty = 0,
     mean = 0,
     stdDev = 0,
     min = 0,
@@ -387,19 +386,15 @@ function _createTextBoxContent(
     const hasStandardUptakeValues = meanStdDevSUV && meanStdDevSUV.mean !== 0;
     const unit = _getUnit(modality, options.showHounsfieldUnits);
 
-    let meanString = `avg: ${toGermanNumberStringTemp(mean)} ${unit}`;
-    const stdDevString = `sd: ${toGermanNumberStringTemp(stdDev)} ${unit}`;
+    let meanString = `avg: ${mean} ${unit}`;
+    const stdDevString = `sd: ${stdDev} ${unit}`;
 
     // If this image has SUV values to display, concatenate them to the text line
     if (hasStandardUptakeValues) {
       const SUVtext = ' SUV: ';
 
-      const meanSuvString = `${SUVtext}${numbersWithCommas(
-        meanStdDevSUV.mean.toFixed(2)
-      )}`;
-      const stdDevSuvString = `${SUVtext}${numbersWithCommas(
-        meanStdDevSUV.stdDev.toFixed(2)
-      )}`;
+      const meanSuvString = `${SUVtext}${meanStdDevSUV.mean}`;
+      const stdDevSuvString = `${SUVtext}${meanStdDevSUV.stdDev}`;
 
       const targetStringLength = Math.floor(
         context.measureText(`${stdDevString}     `).width
@@ -431,15 +426,16 @@ function _createTextBoxContent(
     }
   }
 
-  textLines.push(_formatArea(area, hasPixelSpacing, uncertainty));
+  textLines.push(_formatArea(area, hasPixelSpacing, areaUncertainty));
 
-  // dedalus: disabled as not needed at this moment
   // If (radius) {
   //   textLines.push(_formatLength(radius, 'Radius', hasPixelSpacing));
   // }
-  // if (perimeter) {
-  //   textLines.push(_formatLength(perimeter, 'Perimeter', hasPixelSpacing));
-  // }
+  if (perimeter) {
+    textLines.push(
+      _formatPerimeter(perimeter, 'd', hasPixelSpacing, perimeterUncertainty)
+    );
+  }
   otherLines.forEach(x => textLines.push(x));
 
   return textLines;
@@ -450,6 +446,7 @@ function _createTextBoxContent(
  *
  * @param {*} area
  * @param {*} hasPixelSpacing
+ * @param {*} uncertainty
  * @returns {string} The formatted label for showing area
  */
 function _formatArea(area, hasPixelSpacing, uncertainty) {
@@ -458,7 +455,7 @@ function _formatArea(area, hasPixelSpacing, uncertainty) {
     ? ` mm${String.fromCharCode(178)}`
     : ` px${String.fromCharCode(178)}`;
 
-  return `A: ${area} ${suffix} +/- ${uncertainty}`;
+  return `A: ${area} ${suffix} +/- ${uncertainty} ${suffix}`;
 }
 
 function _formatLength(value, name, hasPixelSpacing) {
@@ -467,7 +464,16 @@ function _formatLength(value, name, hasPixelSpacing) {
   }
   const suffix = hasPixelSpacing ? ' mm' : ' px';
 
-  return `${name}: ${numbersWithCommas(value.toFixed(1))}${suffix}`;
+  return `${name}: ${value} ${suffix}`;
+}
+
+function _formatPerimeter(value, name, hasPixelSpacing, uncertainty) {
+  if (!value) {
+    return '';
+  }
+  const suffix = hasPixelSpacing ? ' mm' : ' px';
+
+  return `${name}: ${value} ${suffix} +/- ${uncertainty} ${suffix}`;
 }
 
 /**
@@ -503,8 +509,14 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
 
   if (modality === 'PT') {
     meanStdDevSUV = {
-      mean: calculateSUV(image, ellipseMeanStdDev.mean, true) || 0,
-      stdDev: calculateSUV(image, ellipseMeanStdDev.stdDev, true) || 0,
+      mean:
+        measurementUncertainty.getGenericRounding(
+          calculateSUV(image, ellipseMeanStdDev.mean, true)
+        ) || 0,
+      stdDev:
+        measurementUncertainty.getGenericRounding(
+          calculateSUV(image, ellipseMeanStdDev.stdDev, true)
+        ) || 0,
     };
   }
 
@@ -512,14 +524,28 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     (circleCoordinates.width *
       ((pixelSpacing && pixelSpacing.colPixelSpacing) || 1)) /
     2;
-  const perimeter = new Decimal(2 * Math.PI * radius);
+
+  const perimeter = 2 * Math.PI * radius;
 
   const pixelDiagonal = measurementUncertainty.getPixelDiagonal(
     pixelSpacing.colPixelSpacing,
     pixelSpacing.rowPixelSpacing
   );
 
-  const uncertainty = new Decimal(perimeter * pixelDiagonal);
+  const areaUncertainty = new Decimal(perimeter * pixelDiagonal);
+  const perimeterUncertainty = new Decimal(pixelDiagonal * Decimal.sqrt(2));
+
+  const roundedPerimeter =
+    measurementUncertainty.roundValueBasedOnUncertainty(
+      perimeter,
+      perimeterUncertainty
+    ) || 0;
+
+  const roundedPerimeterUncertainty =
+    measurementUncertainty.roundValueBasedOnUncertainty(
+      perimeterUncertainty,
+      perimeterUncertainty
+    ) || 0;
 
   const area =
     Math.PI *
@@ -531,24 +557,33 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
       2);
 
   const roundedArea =
-    measurementUncertainty.roundValueBasedOnUncertainty(area, uncertainty) || 0;
-  const roundedUncertainty =
     measurementUncertainty.roundValueBasedOnUncertainty(
-      uncertainty,
-      uncertainty
+      area,
+      areaUncertainty
     ) || 0;
+  const roundedAreaUncertainty =
+    measurementUncertainty.roundValueBasedOnUncertainty(
+      areaUncertainty,
+      areaUncertainty
+    ) || 0;
+
+  const mean =
+    measurementUncertainty.getGenericRounding(ellipseMeanStdDev.mean) || 0;
+  const stdDev =
+    measurementUncertainty.getGenericRounding(ellipseMeanStdDev.stdDev) || 0;
 
   return {
     area: new Decimal(roundedArea) || 0,
+    areaUncertainty: new Decimal(roundedAreaUncertainty) || 0,
     radius: new Decimal(radius) || 0,
-    perimeter: new Decimal(perimeter) || 0,
+    perimeter: new Decimal(roundedPerimeter) || 0,
+    perimeterUncertainty: new Decimal(roundedPerimeterUncertainty) || 0,
     count: new Decimal(ellipseMeanStdDev.count) || 0,
-    mean: ellipseMeanStdDev.mean || 0,
+    mean: mean || 0,
     variance: new Decimal(ellipseMeanStdDev.variance) || 0,
-    stdDev: ellipseMeanStdDev.stdDev || 0,
+    stdDev: stdDev || 0,
     min: new Decimal(ellipseMeanStdDev.min) || 0,
     max: new Decimal(ellipseMeanStdDev.max) || 0,
     meanStdDevSUV,
-    uncertainty: new Decimal(roundedUncertainty) || 0,
   };
 }

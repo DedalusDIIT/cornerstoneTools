@@ -19,13 +19,11 @@ import {
 // Util
 import calculateSUV from './../../util/calculateSUV.js';
 import getROITextBoxCoords from '../../util/getROITextBoxCoords.js';
-import numbersWithCommas from './../../util/numbersWithCommas.js';
 import throttle from './../../util/throttle.js';
 import { rectangleRoiCursor } from '../cursors/index.js';
 import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import { getModule } from '../../store/index';
-import toGermanNumberStringTemp from '../../util/toGermanNumberStringTemp.js';
 import * as measurementUncertainty from '../../util/measurementUncertaintyTool.js';
 import Decimal from 'decimal.js';
 
@@ -331,8 +329,14 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
 
   if (modality === 'PT') {
     meanStdDevSUV = {
-      mean: new Decimal(calculateSUV(image, roiMeanStdDev.mean, true)) || 0,
-      stdDev: new Decimal(calculateSUV(image, roiMeanStdDev.stdDev, true)) || 0,
+      mean:
+        measurementUncertainty.getGenericRounding(
+          calculateSUV(image, roiMeanStdDev.mean, true)
+        ) || 0,
+      stdDev:
+        measurementUncertainty.getGenericRounding(
+          calculateSUV(image, roiMeanStdDev.stdDev, true)
+        ) || 0,
     };
   }
 
@@ -351,28 +355,36 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     pixelSpacing.colPixelSpacing,
     pixelSpacing.rowPixelSpacing
   );
-  const uncertainty = new Decimal(perimeter * pixelDiagonal);
+  const areaUncertainty = new Decimal(perimeter * pixelDiagonal);
 
   const roundedArea =
-    measurementUncertainty.roundValueBasedOnUncertainty(area, uncertainty) || 0;
-
-  const roundedUncertainty =
     measurementUncertainty.roundValueBasedOnUncertainty(
-      uncertainty,
-      uncertainty
+      area,
+      areaUncertainty
     ) || 0;
+
+  const roundedAreaUncertainty =
+    measurementUncertainty.roundValueBasedOnUncertainty(
+      areaUncertainty,
+      areaUncertainty
+    ) || 0;
+
+  const mean =
+    measurementUncertainty.getGenericRounding(roiMeanStdDev.mean) || 0;
+  const stdDev =
+    measurementUncertainty.getGenericRounding(roiMeanStdDev.stdDev) || 0;
 
   return {
     area: new Decimal(roundedArea) || 0,
+    areaUncertainty: new Decimal(roundedAreaUncertainty) || 0,
     perimeter,
     count: new Decimal(roiMeanStdDev.count) || 0,
-    mean: roiMeanStdDev.mean || 0,
+    mean: mean || 0,
     variance: new Decimal(roiMeanStdDev.variance) || 0,
-    stdDev: roiMeanStdDev.stdDev || 0,
+    stdDev: stdDev || 0,
     min: new Decimal(roiMeanStdDev.min) || 0,
     max: new Decimal(roiMeanStdDev.max) || 0,
     meanStdDevSUV,
-    uncertainty: new Decimal(roundedUncertainty) || 0,
   };
 }
 
@@ -476,7 +488,7 @@ function _formatArea(area, hasPixelSpacing, uncertainty) {
     ? ` mm${String.fromCharCode(178)}`
     : ` px${String.fromCharCode(178)}`;
 
-  return `A: ${area} ${suffix} +/- ${uncertainty}`;
+  return `A: ${area} ${suffix} +/- ${uncertainty} ${suffix}`;
 }
 
 function _getUnit(modality, showHounsfieldUnits) {
@@ -498,7 +510,7 @@ function _getUnit(modality, showHounsfieldUnits) {
 function _createTextBoxContent(
   context,
   isColorImage,
-  { area, uncertainty, mean, stdDev, min, max, meanStdDevSUV },
+  { area, areaUncertainty, mean, stdDev, min, max, meanStdDevSUV },
   modality,
   hasPixelSpacing,
   options = {}
@@ -512,19 +524,15 @@ function _createTextBoxContent(
     const hasStandardUptakeValues = meanStdDevSUV && meanStdDevSUV.mean !== 0;
     const unit = _getUnit(modality, options.showHounsfieldUnits);
 
-    let meanString = `avg: ${toGermanNumberStringTemp(mean)} ${unit}`;
-    const stdDevString = `sd: ${toGermanNumberStringTemp(stdDev)} ${unit}`;
+    let meanString = `avg: ${mean} ${unit}`;
+    const stdDevString = `sd: ${stdDev} ${unit}`;
 
     // If this image has SUV values to display, concatenate them to the text line
     if (hasStandardUptakeValues) {
       const SUVtext = ' SUV: ';
 
-      const meanSuvString = `${SUVtext}${numbersWithCommas(
-        meanStdDevSUV.mean.toFixed(2)
-      )}`;
-      const stdDevSuvString = `${SUVtext}${numbersWithCommas(
-        meanStdDevSUV.stdDev.toFixed(2)
-      )}`;
+      const meanSuvString = `${SUVtext}${meanStdDevSUV.mean}`;
+      const stdDevSuvString = `${SUVtext}${meanStdDevSUV.stdDev}`;
 
       const targetStringLength = Math.floor(
         context.measureText(`${stdDevString}     `).width
@@ -556,7 +564,7 @@ function _createTextBoxContent(
     }
   }
 
-  textLines.push(_formatArea(area, hasPixelSpacing, uncertainty));
+  textLines.push(_formatArea(area, hasPixelSpacing, areaUncertainty));
   otherLines.forEach(x => textLines.push(x));
 
   return textLines;

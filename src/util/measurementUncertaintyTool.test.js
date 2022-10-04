@@ -107,4 +107,39 @@ describe('util: measurementUncertaintyTool.js', () => {
 
     expect(decimalRoundingRange).toEqual(new Decimal(100));
   });
+
+  it('returns a number rounded with three decimal if inputValue is equal and less than 1.5 ', () => {
+    const inputValue = 0.234234;
+    const result = measurementUncertainty.getGenericRounding(inputValue);
+
+    expect(result).toEqual(0.234);
+  });
+
+  it('returns a number rounded up to three decimal places if inputValue is equal and less than 1.5 ', () => {
+    const inputValue = 1.27;
+    const result = measurementUncertainty.getGenericRounding(inputValue);
+
+    expect(result).toEqual(1.27);
+  });
+
+  it('returns a number rounded with two decimal places if inputValue is great than 1.5 and less than 10 ', () => {
+    const inputValue = 8.23623;
+    const result = measurementUncertainty.getGenericRounding(inputValue);
+
+    expect(result).toEqual(8.24);
+  });
+
+  it('returns a number rounded with one decimal if inputValue is equal and great than 10 and equal and less than 100 ', () => {
+    const inputValue = 28.36523;
+    const result = measurementUncertainty.getGenericRounding(inputValue);
+
+    expect(result).toEqual(28.4);
+  });
+
+  it('returns a number rounded to one if inputValue is equal and great than 100', () => {
+    const inputValue = 287.9;
+    const result = measurementUncertainty.getGenericRounding(inputValue);
+
+    expect(result).toEqual(288);
+  });
 });

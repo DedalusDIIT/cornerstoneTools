@@ -212,7 +212,8 @@ describe('CobbAngleTool.js', () => {
       };
 
       instantiatedTool.updateCachedStats(image, element, data);
-      expect(data.rAngle).toBe(76.8);
+      expect(data.alphaAngle).toBe(76.8);
+      expect(data.betaAngle).toBe(103.2);
       expect(data.invalidated).toBe(false);
     });
   });

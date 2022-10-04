@@ -59,9 +59,25 @@ function getRoundingRange(uncertaintyValue) {
   return Decimal.pow(10, uncertaintyWholePartFirstDigit);
 }
 
+function getGenericRounding(inputValue) {
+  const absoluteInputValue = Decimal.abs(inputValue);
+  const valueToBeRounded = new Decimal(inputValue);
+
+  if (absoluteInputValue <= 1.5) {
+    return valueToBeRounded.toDecimalPlaces(3).toNumber();
+  } else if (absoluteInputValue > 1.5 && absoluteInputValue < 10) {
+    return valueToBeRounded.toDecimalPlaces(2).toNumber();
+  } else if (absoluteInputValue >= 10 && absoluteInputValue <= 100) {
+    return valueToBeRounded.toDecimalPlaces(1).toNumber();
+  }
+
+  return valueToBeRounded.toNearest(1).toNumber();
+}
+
 export {
   roundValueBasedOnUncertainty,
   getPixelDiagonal,
   getIndexOfFirstSignificantDigit,
   getRoundingRange,
+  getGenericRounding,
 };
