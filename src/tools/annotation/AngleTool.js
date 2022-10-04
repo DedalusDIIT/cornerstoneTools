@@ -271,7 +271,10 @@ export default class AngleTool extends BaseAnnotationTool {
     }
 
     function textBoxText(data, rowPixelSpacing, colPixelSpacing) {
-      const suffix = !rowPixelSpacing || !colPixelSpacing ? ' (isotropic)' : '';
+      const suffix =
+        !rowPixelSpacing || !colPixelSpacing
+          ? ` (${localization.translate('isotropic')})`
+          : '';
       const str = '00B0'; // Degrees symbol
 
       return (

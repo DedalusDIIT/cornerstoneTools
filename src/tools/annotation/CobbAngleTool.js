@@ -403,7 +403,10 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       return '';
     }
 
-    const suffix = !rowPixelSpacing || !colPixelSpacing ? ' (isotropic)' : '';
+    const suffix =
+      !rowPixelSpacing || !colPixelSpacing
+        ? ` (${localization.translate('isotropic')})`
+        : '';
 
     return `${localization.localizeNumber(rAngle)}\u00B0${suffix}`;
   }
