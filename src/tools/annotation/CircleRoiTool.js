@@ -237,7 +237,7 @@ export default class CircleRoiTool extends BaseAnnotationTool {
           data.handles.start,
           radius,
           circleOptions,
-          'pixel'
+          'pix'
         );
 
         if (centerPointRadius && radius > 3 * centerPointRadius) {
@@ -247,7 +247,7 @@ export default class CircleRoiTool extends BaseAnnotationTool {
             data.handles.start,
             centerPointRadius,
             circleOptions,
-            'pixel'
+            'pix'
           );
         }
 
@@ -454,7 +454,7 @@ function _formatArea(area, hasPixelSpacing) {
   // This uses Char code 178 for a superscript 2
   const suffix = hasPixelSpacing
     ? ` mm${String.fromCharCode(178)}`
-    : ` px${String.fromCharCode(178)}`;
+    : ` pix${String.fromCharCode(178)}`;
 
   return `${localization.translate('area')}: ${localization.localizeNumber(
     area
@@ -465,7 +465,7 @@ function _formatLength(value, name, hasPixelSpacing) {
   if (!value) {
     return '';
   }
-  const suffix = hasPixelSpacing ? ' mm' : ' px';
+  const suffix = hasPixelSpacing ? ' mm' : ' pix';
 
   return `${name}: ${numbersWithCommas(value.toFixed(1))}${suffix}`;
 }

@@ -222,7 +222,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
           data.handles.start,
           data.handles.end,
           rectOptions,
-          'pixel',
+          'pix',
           data.handles.initialRotation
         );
 
@@ -455,7 +455,7 @@ function _formatArea(area, hasPixelSpacing) {
   // This uses Char code 178 for a superscript 2
   const suffix = hasPixelSpacing
     ? ` mm${String.fromCharCode(178)}`
-    : ` px${String.fromCharCode(178)}`;
+    : ` pix${String.fromCharCode(178)}`;
 
   return `${localization.translate('area')}: ${localization.localizeNumber(
     area

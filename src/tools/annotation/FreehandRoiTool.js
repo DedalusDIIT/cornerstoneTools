@@ -554,7 +554,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
         const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
         if (!rowPixelSpacing || !colPixelSpacing) {
-          suffix = ` pixels${String.fromCharCode(178)}`;
+          suffix = ` pix${String.fromCharCode(178)}`;
         }
 
         // Create a line of text to display the area and its units
