@@ -42,6 +42,7 @@ export default class LengthTool extends BaseAnnotationTool {
         drawHandlesOnHover: false,
         hideHandlesIfMoving: false,
         renderDashed: false,
+        displayUncertainties: false,
       },
     };
 
@@ -251,7 +252,17 @@ export default class LengthTool extends BaseAnnotationTool {
           }
         }
 
-        const text = textBoxText(data, rowPixelSpacing, colPixelSpacing);
+        const displayUncertainties =
+          typeof this.options.displayUncertainties === 'undefined'
+            ? this.configuration.displayUncertainties
+            : this.options.displayUncertainties;
+
+        const text = textBoxText(
+          data,
+          rowPixelSpacing,
+          colPixelSpacing,
+          displayUncertainties
+        );
 
         drawLinkedTextBox(
           context,
@@ -269,7 +280,12 @@ export default class LengthTool extends BaseAnnotationTool {
     }
 
     // - SideEffect: Updates annotation 'suffix'
-    function textBoxText(annotation, rowPixelSpacing, colPixelSpacing) {
+    function textBoxText(
+      annotation,
+      rowPixelSpacing,
+      colPixelSpacing,
+      displayUncertainties
+    ) {
       const measuredValue = _sanitizeMeasuredValue(annotation.length);
 
       // Measured value is not defined, return empty string
@@ -287,7 +303,11 @@ export default class LengthTool extends BaseAnnotationTool {
 
       annotation.unit = suffix;
 
-      return `${measuredValue} ${suffix} +/- ${annotation.uncertainty}`;
+      const uncertaintiesText = displayUncertainties
+        ? `+/- ${annotation.uncertainty} ${suffix}`
+        : '';
+
+      return `${measuredValue} ${suffix} ${uncertaintiesText}`;
     }
 
     function textBoxAnchorPoints(handles) {
