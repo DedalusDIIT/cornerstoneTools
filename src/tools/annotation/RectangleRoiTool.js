@@ -222,7 +222,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
           data.handles.start,
           data.handles.end,
           rectOptions,
-          'pix',
+          'pixel',
           data.handles.initialRotation
         );
 

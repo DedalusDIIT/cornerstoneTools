@@ -235,7 +235,7 @@ export default class CircleRoiTool extends BaseAnnotationTool {
           data.handles.start,
           radius,
           circleOptions,
-          'pix'
+          'pixel'
         );
 
         drawHandles(context, eventData, data.handles, handleOptions);

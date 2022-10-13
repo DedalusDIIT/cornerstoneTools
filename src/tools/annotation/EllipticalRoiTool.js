@@ -247,7 +247,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           data.handles.start,
           data.handles.end,
           ellipseOptions,
-          'pix',
+          'pixel',
           data.handles.initialRotation
         );
         drawHandles(context, eventData, data.handles, handleOptions);
