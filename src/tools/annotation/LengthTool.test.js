@@ -2,7 +2,6 @@ import LengthTool from './LengthTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 import { getLogger } from '../../util/logger.js';
 import Decimal from 'decimal.js';
-import * as measurementUncertainty from '../../util/measurementUncertaintyTool.js';
 
 jest.mock('../../util/logger.js');
 jest.mock('./../../stateManagement/toolState.js', () => ({

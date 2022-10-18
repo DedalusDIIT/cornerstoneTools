@@ -379,7 +379,6 @@ export default class CobbAngleTool extends BaseAnnotationTool {
   onMeasureModified(ev) {
     const { element } = ev.detail;
     const image = external.cornerstone.getEnabledElement(element).image;
-    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
     if (ev.detail.toolName !== this.name) {
       return;
