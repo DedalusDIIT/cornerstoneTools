@@ -51,7 +51,7 @@ jest.mock('../../drawing/drawLinkedTextBox', () => ({
   default: jest.fn(),
 }));
 
-jest.mock('../../util/formatMeasurment');
+jest.mock('../../util/formatMeasurement');
 
 const badMouseEventData = 'hello world';
 const goodMouseEventData = {

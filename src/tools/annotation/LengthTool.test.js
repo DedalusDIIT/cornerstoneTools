@@ -31,7 +31,7 @@ jest.mock('./../../drawing/index.js', () => ({
 jest.mock('./../../drawing/drawLinkedTextBox.js');
 jest.mock('../../util/getPixelSpacing.js');
 jest.mock('./../../drawing/drawHandles.js');
-jest.mock('../../util/formatMeasurment');
+jest.mock('../../util/formatMeasurement');
 
 const badMouseEventData = 'hello world';
 const goodMouseEventData = {
