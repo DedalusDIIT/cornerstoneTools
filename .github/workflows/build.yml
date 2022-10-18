@@ -5,9 +5,6 @@ name: Build
 
 on:
   push:
-    branches: [ "6.0.6-ded4" ]
-  pull_request:
-    branches: [ "6.0.6-ded4" ]
 
 jobs:
   build:
