@@ -21,15 +21,15 @@ function formatLenght(
 
   const localizedLength = localizeNumber(lenght);
   const suffix = _getLinearMeasurementSuffix(hasPixelSpacing);
-  const lengthithSuffix = `${localizedLength} ${suffix}`;
+  const lengthWithSuffix = `${localizedLength} ${suffix}`;
 
   if (!displayUncertainties) {
-    return lengthithSuffix;
+    return lengthWithSuffix;
   }
 
   const localizedUncertainty = localizeNumber(uncertainty);
 
-  return `${lengthithSuffix} +/- ${localizedUncertainty} ${suffix}`;
+  return `${lengthWithSuffix} +/- ${localizedUncertainty} ${suffix}`;
 }
 
 /**

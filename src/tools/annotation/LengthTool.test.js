@@ -4,13 +4,7 @@ import { getLogger } from '../../util/logger.js';
 import Decimal from 'decimal.js';
 import getPixelSpacing from '../../util/getPixelSpacing.js';
 
-import { formatLenght } from '../../util/formatMeasurment.js';
-
-jest.mock('../../util/localization/localization.utils', () => ({
-  __esModule: true,
-  translate: jest.fn(val => val),
-  localizeNumber: jest.fn(val => val),
-}));
+import { formatLenght } from '../../util/formatMeasurement.js';
 
 jest.mock('../../util/logger.js');
 jest.mock('./../../stateManagement/toolState.js', () => ({

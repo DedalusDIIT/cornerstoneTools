@@ -4,7 +4,7 @@ import getNewContextMocked from '../../drawing/getNewContext.js';
 
 import { getLogger } from '../../util/logger.js';
 import Decimal from 'decimal.js';
-import { formatArea, formatDiameter } from '../../util/formatMeasurment.js';
+import { formatArea, formatDiameter } from '../../util/formatMeasurement.js';
 
 /* ~ Setup
  * To mock properly, Jest needs jest.mock('moduleName') to be in the

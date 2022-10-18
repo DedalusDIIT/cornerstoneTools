@@ -2,7 +2,7 @@ import RectangleRoiTool from './RectangleRoiTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 import { getLogger } from '../../util/logger.js';
 import Decimal from 'decimal.js';
-import { formatArea } from '../../util/formatMeasurment.js';
+import { formatArea } from '../../util/formatMeasurement.js';
 import getNewContextMocked from '../../drawing/getNewContext.js';
 
 jest.mock('../../util/localization/localization.utils', () => ({

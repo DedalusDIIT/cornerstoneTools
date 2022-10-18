@@ -1,15 +1,15 @@
-import BaseMeasurmentTool from './BaseMeasurmentTool';
+import BaseMeasurementTool from './BaseMeasurementTool';
 
 describe('BaseMeasurmentTool.js', () => {
   describe('displayUncertainties', () => {
     it('should have the value "false"', () => {
-      const instantiatedTool = new BaseMeasurmentTool();
+      const instantiatedTool = new BaseMeasurementTool();
 
       expect(instantiatedTool.displayUncertainties).toBe(false);
     });
 
     it('should be able to configure it on the constructor', () => {
-      const instantiatedTool = new BaseMeasurmentTool({
+      const instantiatedTool = new BaseMeasurementTool({
         configuration: { displayUncertainties: true },
       });
 
@@ -17,7 +17,7 @@ describe('BaseMeasurmentTool.js', () => {
     });
 
     it('should be able to set it after instantiated', () => {
-      const instantiatedTool = new BaseMeasurmentTool({
+      const instantiatedTool = new BaseMeasurementTool({
         configuration: { displayUncertainties: false },
       });
 

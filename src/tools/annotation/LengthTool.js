@@ -1,4 +1,4 @@
-import BaseMeasurmentTool from '../base/BaseMeasurmentTool.js';
+import BaseMeasurementTool from '../base/BaseMeasurementTool.js';
 // State
 import { getToolState } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
@@ -20,9 +20,8 @@ import throttle from '../../util/throttle';
 import { getModule } from '../../store/index';
 import * as measurementUncertainty from '../../util/measurementUncertaintyTool.js';
 import roundToDecimal from '../../util/roundToDecimal.js';
-import { formatLenght } from '../../util/formatMeasurment';
+import { formatLenght } from '../../util/formatMeasurement';
 import Decimal from 'decimal.js';
-import * as localization from '../../util/localization/localization.utils';
 
 const logger = getLogger('tools:annotation:LengthTool');
 
@@ -31,9 +30,9 @@ const logger = getLogger('tools:annotation:LengthTool');
  * @class LengthTool
  * @memberof Tools.Annotation
  * @classdesc Tool for measuring distances.
- * @extends Tools.Base.BaseMeasurmentTool
+ * @extends Tools.Base.BaseMeasurementTool
  */
-export default class LengthTool extends BaseMeasurmentTool {
+export default class LengthTool extends BaseMeasurementTool {
   constructor(props = {}) {
     const defaultProps = {
       name: 'Length',

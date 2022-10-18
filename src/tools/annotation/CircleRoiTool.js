@@ -1,5 +1,5 @@
 import external from './../../externalModules.js';
-import BaseMeasurmentTool from '../base/BaseMeasurmentTool.js';
+import BaseMeasurementTool from '../base/BaseMeasurementTool.js';
 
 // State
 import { getToolState } from './../../stateManagement/toolState.js';
@@ -29,7 +29,7 @@ import { circleRoiCursor } from '../cursors/index.js';
 import getCircleCoords from '../../util/getCircleCoords';
 import * as measurementUncertainty from '../../util/measurementUncertaintyTool.js';
 import Decimal from 'decimal.js';
-import { formatArea, formatDiameter } from '../../util/formatMeasurment.js';
+import { formatArea, formatDiameter } from '../../util/formatMeasurement.js';
 
 const logger = getLogger('tools:annotation:CircleRoiTool');
 
@@ -39,9 +39,9 @@ const logger = getLogger('tools:annotation:CircleRoiTool');
  * @memberof Tools.Annotation
  * @classdesc Tool for drawing circular regions of interest, and measuring
  * the statistics of the enclosed pixels.
- * @extends Tools.Base.BaseMeasurmentTool
+ * @extends Tools.Base.BaseMeasurementTool
  */
-export default class CircleRoiTool extends BaseMeasurmentTool {
+export default class CircleRoiTool extends BaseMeasurementTool {
   constructor(props = {}) {
     const defaultProps = {
       name: 'CircleRoi',

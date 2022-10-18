@@ -1,5 +1,5 @@
 import external from './../../externalModules.js';
-import BaseMeasurmentTool from '../base/BaseMeasurmentTool.js';
+import BaseMeasurementTool from '../base/BaseMeasurementTool.js';
 
 // State
 import { getToolState } from './../../stateManagement/toolState.js';
@@ -26,7 +26,7 @@ import getPixelSpacing from '../../util/getPixelSpacing';
 import { getModule } from '../../store/index';
 import * as measurementUncertainty from '../../util/measurementUncertaintyTool.js';
 import Decimal from 'decimal.js';
-import { formatArea } from '../../util/formatMeasurment.js';
+import { formatArea } from '../../util/formatMeasurement.js';
 import * as localization from '../../util/localization/localization.utils';
 
 const logger = getLogger('tools:annotation:RectangleRoiTool');
@@ -37,9 +37,9 @@ const logger = getLogger('tools:annotation:RectangleRoiTool');
  * @memberof Tools.Annotation
  * @classdesc Tool for drawing rectangular regions of interest, and measuring
  * the statistics of the enclosed pixels.
- * @extends Tools.Base.BaseMeasurmentTool
+ * @extends Tools.Base.BaseMeasurementTool
  */
-export default class RectangleRoiTool extends BaseMeasurmentTool {
+export default class RectangleRoiTool extends BaseMeasurementTool {
   constructor(props = {}) {
     const defaultProps = {
       name: 'RectangleRoi',

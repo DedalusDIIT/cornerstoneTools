@@ -6,7 +6,7 @@ import BaseAnnotationTool from './BaseAnnotationTool.js';
  * cornerstone canvas.
  * @extends Tools.Base.BaseAnnotationTool
  */
-class BaseMeasurmentTool extends BaseAnnotationTool {
+class BaseMeasurementTool extends BaseAnnotationTool {
   /**
    * Updates weather the uncertainties should be displayed or not.
    * The tool options can be changed during runtime overriding the tool configuration.
@@ -23,4 +23,4 @@ class BaseMeasurmentTool extends BaseAnnotationTool {
   }
 }
 
-export default BaseMeasurmentTool;
+export default BaseMeasurementTool;

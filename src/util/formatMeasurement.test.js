@@ -2,7 +2,7 @@ import {
   formatArea,
   formatLenght,
   formatDiameter,
-} from './formatMeasurment.js';
+} from './formatMeasurement.js';
 
 jest.mock('./localization/localization.utils', () => ({
   __esModule: true,
@@ -10,7 +10,7 @@ jest.mock('./localization/localization.utils', () => ({
   localizeNumber: jest.fn(val => val),
 }));
 
-describe('formatMeasurment', () => {
+describe('formatMeasurement', () => {
   describe('formatLenght', () => {
     const length = '17,3';
     const uncertainty = '0,4';
