@@ -3,7 +3,6 @@ import { getToolState } from './../../stateManagement/toolState.js';
 import { getLogger } from '../../util/logger.js';
 import Decimal from 'decimal.js';
 import getPixelSpacing from '../../util/getPixelSpacing.js';
-
 import { formatLenght } from '../../util/formatMeasurement.js';
 
 jest.mock('../../util/logger.js');
