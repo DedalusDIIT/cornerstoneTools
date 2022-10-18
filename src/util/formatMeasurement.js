@@ -97,8 +97,6 @@ function formatDiameter(
   return `${measuredValueWithSuffix} +/- ${localizedUncertainty} ${suffix}`;
 }
 
-export { formatArea, formatLenght, formatDiameter };
-
 function _getAreaMeasurmentSuffix(hasPixelSpacing) {
   const squareCharacter = String.fromCharCode(178);
   const preffix = _getLinearMeasurementSuffix(hasPixelSpacing);
@@ -109,3 +107,5 @@ function _getAreaMeasurmentSuffix(hasPixelSpacing) {
 function _getLinearMeasurementSuffix(hasPixelSpacing) {
   return hasPixelSpacing ? 'mm' : 'pix';
 }
+
+export { formatArea, formatLenght, formatDiameter };
