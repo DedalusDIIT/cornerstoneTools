@@ -330,12 +330,14 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
 
   if (modality === 'PT') {
     meanStdDevSUV = {
-      mean: measurementUncertainty.getGenericRounding(
-        calculateSUV(image, roiMeanStdDev.mean, true)
-      ),
-      stdDev: measurementUncertainty.getGenericRounding(
-        calculateSUV(image, roiMeanStdDev.stdDev, true)
-      ),
+      mean:
+        measurementUncertainty.getGenericRounding(
+          calculateSUV(image, roiMeanStdDev.mean, true)
+        ) || 0,
+      stdDev:
+        measurementUncertainty.getGenericRounding(
+          calculateSUV(image, roiMeanStdDev.stdDev, true)
+        ) || 0,
     };
   }
 
@@ -358,13 +360,15 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
   const areaUncertainty = perimeter * pixelDiagonal || 0;
 
   return {
-    area: measurementUncertainty.roundArea(area, areaUncertainty),
-    areaUncertainty: measurementUncertainty.roundUncertainty(areaUncertainty),
+    area: measurementUncertainty.roundArea(area, areaUncertainty) || 0,
+    areaUncertainty:
+      measurementUncertainty.roundUncertainty(areaUncertainty) || 0,
     perimeter,
     count: new Decimal(roiMeanStdDev.count) || 0,
-    mean: measurementUncertainty.getGenericRounding(roiMeanStdDev.mean),
+    mean: measurementUncertainty.getGenericRounding(roiMeanStdDev.mean) || 0,
     variance: new Decimal(roiMeanStdDev.variance) || 0,
-    stdDev: measurementUncertainty.getGenericRounding(roiMeanStdDev.stdDev),
+    stdDev:
+      measurementUncertainty.getGenericRounding(roiMeanStdDev.stdDev) || 0,
     min: new Decimal(roiMeanStdDev.min) || 0,
     max: new Decimal(roiMeanStdDev.max) || 0,
     meanStdDevSUV,

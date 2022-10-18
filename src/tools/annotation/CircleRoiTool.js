@@ -494,12 +494,14 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
 
   if (modality === 'PT') {
     meanStdDevSUV = {
-      mean: measurementUncertainty.getGenericRounding(
-        calculateSUV(image, ellipseMeanStdDev.mean, true)
-      ),
-      stdDev: measurementUncertainty.getGenericRounding(
-        calculateSUV(image, ellipseMeanStdDev.stdDev, true)
-      ),
+      mean:
+        measurementUncertainty.getGenericRounding(
+          calculateSUV(image, ellipseMeanStdDev.mean, true)
+        ) || 0,
+      stdDev:
+        measurementUncertainty.getGenericRounding(
+          calculateSUV(image, ellipseMeanStdDev.stdDev, true)
+        ) || 0,
     };
   }
 
@@ -536,9 +538,11 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     ),
     perimeter,
     count: ellipseMeanStdDev.count || 0,
-    mean: measurementUncertainty.getGenericRounding(ellipseMeanStdDev.mean),
+    mean:
+      measurementUncertainty.getGenericRounding(ellipseMeanStdDev.mean) || 0,
     variance: ellipseMeanStdDev.variance || 0,
-    stdDev: measurementUncertainty.getGenericRounding(ellipseMeanStdDev.stdDev),
+    stdDev:
+      measurementUncertainty.getGenericRounding(ellipseMeanStdDev.stdDev) || 0,
     min: ellipseMeanStdDev.min || 0,
     max: ellipseMeanStdDev.max || 0,
     meanStdDevSUV,
