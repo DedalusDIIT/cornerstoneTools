@@ -289,9 +289,11 @@ export default class LengthTool extends BaseAnnotationTool {
 
       annotation.unit = suffix;
 
-      return `${localization.localizeNumber(measuredValue)} ${suffix} +/- ${
+      return `${localization.localizeNumber(
+        measuredValue
+      )} ${suffix} +/- ${localization.localizeNumber(
         annotation.uncertainty
-      } ${suffix}`;
+      )} ${suffix}`;
     }
 
     function textBoxAnchorPoints(handles) {

@@ -482,11 +482,11 @@ function _formatArea(area, hasPixelSpacing, uncertainty) {
 
   return `${localization.translate('area')}: ${localization.localizeNumber(
     area
-  )} ${suffix} +/- ${uncertainty} ${suffix}`;
+  )} ${suffix} +/- ${localization.localizeNumber(uncertainty)} ${suffix}`;
 }
 
 function _getUnit(modality, showHounsfieldUnits) {
-  return modality === 'CT' && showHounsfieldUnits !== false ? 'HU' : '';
+  return modality === 'CT' && showHounsfieldUnits !== false ? 'HU' : 'SI';
 }
 
 /**

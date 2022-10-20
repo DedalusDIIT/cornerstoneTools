@@ -326,7 +326,7 @@ function _findTextBoxAnchorPoints(startHandle, endHandle) {
 }
 
 function _getUnit(modality, showHounsfieldUnits) {
-  return modality === 'CT' && showHounsfieldUnits !== false ? 'HU' : '';
+  return modality === 'CT' && showHounsfieldUnits !== false ? 'HU' : 'SI';
 }
 
 /**
@@ -421,7 +421,7 @@ function _createTextBoxContent(
 
   if (diameter) {
     textLines.push(
-      _formatDiameter(diameter, 'd', hasPixelSpacing, diameterUncertainty)
+      _formatDiameter(diameter, hasPixelSpacing, diameterUncertainty)
     );
   }
 
@@ -449,16 +449,18 @@ function _formatArea(area, hasPixelSpacing, uncertainty) {
 
   return `${localization.translate('area')}: ${localization.localizeNumber(
     area
-  )} ${suffix} +/- ${uncertainty} ${suffix}`;
+  )} ${suffix} +/- ${localization.localizeNumber(uncertainty)} ${suffix}`;
 }
 
-function _formatDiameter(value, name, hasPixelSpacing, uncertainty) {
-  if (!value) {
+function _formatDiameter(diameter, hasPixelSpacing, uncertainty) {
+  if (!diameter) {
     return '';
   }
-  const suffix = hasPixelSpacing ? ' mm' : ' px';
+  const suffix = hasPixelSpacing ? ' mm' : ' pix';
 
-  return `${name}: ${value} ${suffix} +/- ${uncertainty} ${suffix}`;
+  return `${localization.translate('diameter')}: ${localization.localizeNumber(
+    diameter
+  )} ${suffix} +/- ${localization.localizeNumber(uncertainty)} ${suffix}`;
 }
 
 /**
