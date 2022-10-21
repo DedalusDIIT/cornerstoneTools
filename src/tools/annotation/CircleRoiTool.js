@@ -329,7 +329,7 @@ function _findTextBoxAnchorPoints(startHandle, endHandle) {
 }
 
 function _getUnit(modality, showHounsfieldUnits) {
-  return modality === 'CT' && showHounsfieldUnits !== false ? 'HU' : '';
+  return modality === 'CT' && showHounsfieldUnits !== false ? 'HU' : 'SI';
 }
 
 /**

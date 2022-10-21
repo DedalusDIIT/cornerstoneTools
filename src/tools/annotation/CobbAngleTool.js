@@ -407,7 +407,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
 
     return `${localization.localizeNumber(
       alphaAngle
-    )}\u00B0 , ${localization.localizeNumber(betaAngle)}\u00B0`;
+    )}\u00B0, ${localization.localizeNumber(betaAngle)}\u00B0`;
   }
 
   activeCallback(element) {
