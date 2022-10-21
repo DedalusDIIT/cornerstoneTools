@@ -1,18 +1,7 @@
 import Decimal from 'decimal.js';
 
-// Run node version with 14.18.3
-/**
- * Custom measurement uncertainty rounding rules.
- * @param  {number} inputValue            measured value from annotation
- * @param  {number} uncertaintyValue      uncertainty from pixel diagonal
- */
-
-/**
- * Rounding
- */
-
 function getPixelDiagonal(colPixelSpacing, rowPixelSpacing) {
-  if (colPixelSpacing !== undefined && colPixelSpacing !== null) {
+  if (colPixelSpacing && rowPixelSpacing) {
     return new Decimal(colPixelSpacing ** 2 + rowPixelSpacing ** 2).sqrt();
   }
 
@@ -36,7 +25,6 @@ function getIndexOfFirstSignificantDigit(uncertaintyValue) {
   return Decimal.ceil(-Decimal.log10(uncertaintyValue));
 }
 
-// Check any undefined value, safe null check, (e.g. if !null)
 function getRoundingRange(uncertaintyValue) {
   if (uncertaintyValue < 1) {
     const indexOfFirstSignificantDigit = getIndexOfFirstSignificantDigit(
