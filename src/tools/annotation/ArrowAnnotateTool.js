@@ -122,6 +122,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     const lineWidth = toolStyle.getToolWidth();
 
     let lineDash;
+
     if (renderDashed) {
       lineDash = getModule('globalConfiguration').configuration.lineDash;
     }
@@ -304,6 +305,20 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
         external.cornerstone.updateImage(element);
       }
     );
+  }
+
+  static getToolTextFromToolState(
+    context,
+    isColorImage,
+    toolState,
+    modality,
+    hasPixelSpacing,
+    displayUncertainties,
+    options = {}
+  ) {
+    // TODO LISA: what to return here, there is no text
+    // should we add this method to all tools even those we are not using?
+    return undefined;
   }
 
   doubleClickCallback(evt) {

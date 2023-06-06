@@ -304,6 +304,8 @@ export default class LengthTool extends BaseMeasurementTool {
       return [handles.start, midpoint, handles.end];
     }
   }
+
+  // TODO LISA: implement getToolTextFromToolState method
 }
 
 /**

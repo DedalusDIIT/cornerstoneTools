@@ -397,6 +397,21 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     data.value = this.textBoxText(data);
   }
 
+  static getToolTextFromToolState(
+    context,
+    isColorImage,
+    toolState, // AlphaAngle, betaAngle
+    modality,
+    hasPixelSpacing,
+    displayUncertainties,
+    options = {}
+  ) {
+    const { alphaAngle, betaAngle } = toolState;
+
+    // TODO LISA: this does not work
+    return this.textBoxText({ alphaAngle, betaAngle });
+  }
+
   textBoxText({ alphaAngle, betaAngle }) {
     if (alphaAngle === undefined) {
       return '';
