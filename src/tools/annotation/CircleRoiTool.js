@@ -334,7 +334,7 @@ export default class CircleRoiTool extends BaseMeasurementTool {
       hasPixelSpacing,
       displayUncertainties,
       options
-    );
+    ).join('\n');
   }
 }
 

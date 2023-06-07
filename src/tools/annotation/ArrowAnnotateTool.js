@@ -316,8 +316,6 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     displayUncertainties,
     options = {}
   ) {
-    // TODO LISA: what to return here, there is no text
-    // should we add this method to all tools even those we are not using?
     return undefined;
   }
 

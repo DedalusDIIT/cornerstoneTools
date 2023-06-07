@@ -302,8 +302,6 @@ export default class RectangleRoiTool extends BaseMeasurementTool {
       meanStdDevSUV,
     } = toolState.cachedStats;
 
-    console.log('TEST', toolState);
-
     return _createTextBoxContent(
       context,
       isColorImage,
@@ -312,7 +310,7 @@ export default class RectangleRoiTool extends BaseMeasurementTool {
       hasPixelSpacing,
       displayUncertainties,
       options
-    );
+    ).join('\n');
   }
 }
 

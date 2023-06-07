@@ -408,21 +408,11 @@ export default class CobbAngleTool extends BaseAnnotationTool {
   ) {
     const { alphaAngle, betaAngle } = toolState;
 
-    // TODO LISA: this does not work
-    return this.textBoxText({ alphaAngle, betaAngle });
+    return _createTextBoxContent({ alphaAngle, betaAngle });
   }
 
   textBoxText({ alphaAngle, betaAngle }) {
-    if (alphaAngle === undefined) {
-      return '';
-    }
-    if (Number.isNaN(alphaAngle)) {
-      return '';
-    }
-
-    return `${localization.localizeNumber(
-      alphaAngle
-    )}\u00B0, ${localization.localizeNumber(betaAngle)}\u00B0`;
+    return _createTextBoxContent({ alphaAngle, betaAngle });
   }
 
   activeCallback(element) {
@@ -454,4 +444,17 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       this.onMeasureModified
     );
   }
+}
+
+function _createTextBoxContent({ alphaAngle, betaAngle }) {
+  if (alphaAngle === undefined) {
+    return '';
+  }
+  if (Number.isNaN(alphaAngle)) {
+    return '';
+  }
+
+  return `${localization.localizeNumber(
+    alphaAngle
+  )}\u00B0, ${localization.localizeNumber(betaAngle)}\u00B0`;
 }

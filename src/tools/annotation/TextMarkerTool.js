@@ -213,6 +213,18 @@ export default class TextMarkerTool extends BaseAnnotationTool {
       }
     }
   }
+
+  static getToolTextFromToolState(
+    context,
+    isColorImage,
+    toolState,
+    modality,
+    hasPixelSpacing,
+    displayUncertainties,
+    options = {}
+  ) {
+    return toolState.text;
+  }
 }
 
 /**
