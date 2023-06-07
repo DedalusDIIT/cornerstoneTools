@@ -397,6 +397,10 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     data.value = this.textBoxText(data);
   }
 
+  /**
+   * Static method which returns based on the given parameters the formatted text.
+   * The text is in the same format as it is also drawn on the canvas in the end.
+   **/
   static getToolTextFromToolState(
     context,
     isColorImage,

@@ -307,7 +307,9 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     );
   }
 
-  // Returns an empty string since the arrow does not draw any text
+  /**
+   * Returns an empty string since the arrow does not draw any text
+   */
   static getToolTextFromToolState(
     context,
     isColorImage,

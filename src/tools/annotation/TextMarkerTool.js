@@ -214,6 +214,9 @@ export default class TextMarkerTool extends BaseAnnotationTool {
     }
   }
 
+  /**
+   * Static method which returns the text which is drawn on the canvas in the end.
+   **/
   static getToolTextFromToolState(
     context,
     isColorImage,
