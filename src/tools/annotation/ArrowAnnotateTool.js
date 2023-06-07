@@ -307,6 +307,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     );
   }
 
+  // Returns an empty string since the arrow does not draw any text
   static getToolTextFromToolState(
     context,
     isColorImage,
@@ -316,7 +317,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     displayUncertainties,
     options = {}
   ) {
-    return undefined;
+    return '';
   }
 
   doubleClickCallback(evt) {
