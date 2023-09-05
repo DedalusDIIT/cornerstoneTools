@@ -4,6 +4,8 @@ import de from '../../../locale/de.json';
 import en from '../../../locale/en.json';
 import fr from '../../../locale/fr.json';
 import pt from '../../../locale/pt.json';
+import es from '../../../locale/es.json';
+import it from '../../../locale/it.json';
 
 const resources = {
   de: {
@@ -17,6 +19,12 @@ const resources = {
   },
   pt: {
     translation: pt,
+  },
+  es: {
+    translation: es,
+  },
+  it: {
+    translation: it,
   },
 };
 

@@ -83,6 +83,39 @@ describe('localization utils', () => {
     });
   });
 
+  describe('Spanish number localization', () => {
+    // eslint-disable-next-line no-return-await
+    beforeAll(async () => await localization.initializeLocalization('es'));
+
+    it('should localize using space grouping', () => {
+      expect(localization.localizeNumber(num1)).toBe('1 000 000,09');
+    });
+
+    it('should localize no minumum decimal part', () => {
+      expect(localization.localizeNumber(num3)).toBe('1 000 000');
+    });
+
+    it('should localize decimal numbers', () => {
+      expect(localization.localizeNumber(num4)).toBe('0,012');
+    });
+  });
+  describe('Italian number localization', () => {
+    // eslint-disable-next-line no-return-await
+    beforeAll(async () => await localization.initializeLocalization('it'));
+
+    it('should localize using space grouping', () => {
+      expect(localization.localizeNumber(num1)).toBe('1 000 000,09');
+    });
+
+    it('should localize no minumum decimal part', () => {
+      expect(localization.localizeNumber(num3)).toBe('1 000 000');
+    });
+
+    it('should localize decimal numbers', () => {
+      expect(localization.localizeNumber(num4)).toBe('0,012');
+    });
+  });
+
   describe('Text localization', () => {
     // eslint-disable-next-line no-return-await
     beforeAll(async () => await localization.initializeLocalization('pt'));
