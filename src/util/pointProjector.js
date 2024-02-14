@@ -177,21 +177,6 @@ export function planePlaneIntersection(targetImagePlane, referenceImagePlane) {
   const origin = originDirection.origin;
   const direction = originDirection.direction;
 
-  // Calculate the longest possible length in the reference image plane (the length of the diagonal)
-  const bottomRight = imagePointToPatientPoint(
-    {
-      x: referenceImagePlane.columns,
-      y: referenceImagePlane.rows,
-    },
-    referenceImagePlane
-  );
-  const distance = referenceImagePositionPatient.distanceTo(bottomRight);
-
-  // Use this distance to bound the ray intersecting the two planes
-  const line = new external.cornerstoneMath.Line3();
-
-  line.start = origin;
-  line.end = origin.clone().add(direction.multiplyScalar(distance));
   const rect = getRectangleFromImagePlane(referenceImagePlane);
   const u = rect.bottom.end
     .clone()
@@ -262,10 +247,7 @@ export function planePlaneIntersection(targetImagePlane, referenceImagePlane) {
     .applyMatrix4(mat4);
 
   const originTransf = origin.clone().applyMatrix4(mat4);
-  const directionTransf = line.end
-    .sub(line.start)
-    .clone()
-    .applyMatrix4(mat4);
+  const directionTransf = direction.clone().applyMatrix4(mat4);
 
   const intersectionsTransf = intersectRayAABB(
     originTransf.toArray(),
@@ -275,6 +257,9 @@ export function planePlaneIntersection(targetImagePlane, referenceImagePlane) {
     1000
   );
 
+  if (!intersectionsTransf) {
+    return;
+  }
   const intersections = [
     intersectionsTransf[0].clone().applyMatrix4(mat4T),
     intersectionsTransf[1].clone().applyMatrix4(mat4T),
