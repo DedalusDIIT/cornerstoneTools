@@ -44,7 +44,7 @@ const isProjection = imagePlane => {
     '1.2.840.10008.5.1.4.1.1.1.2', // Digital Mammography X-Ray Image Storage for Presentation
     '1.2.840.10008.5.1.4.1.1.1.2.1', // Digital Mammography X-Ray Image Storage for Processing
     '1.2.840.10008.5.1.4.1.1.1.3', // Digital Intraoral X-Ray Image Storage for Presentation
-    // '1.2.840.10008.5.1.4.1.1.1.3.1', // Digital Intraoral X-Ray Image Storage for Processing
+    '1.2.840.10008.5.1.4.1.1.1.3.1', // Digital Intraoral X-Ray Image Storage for Processing
     '1.2.840.10008.5.1.4.1.1.12.1', // X-Ray Angiographic Image Storage
     '1.2.840.10008.5.1.4.1.1.12.1.1', // Enhanced XA Image Storage
     '1.2.840.10008.5.1.4.1.1.12.2', // X-Ray Radiofluoroscopic Image Storage
