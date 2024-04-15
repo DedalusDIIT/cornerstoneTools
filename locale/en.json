@@ -2,7 +2,7 @@
   "intlNumber": "{{ val, number(useGrouping: always) }}",
   "area": "A",
   "average": "avg",
-  "circumference": "C",
+  "circumference": "U",
   "diameter": "d",
   "isotropic": "isotropic",
   "standardDeviation": "sd",
