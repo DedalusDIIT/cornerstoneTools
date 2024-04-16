@@ -19,6 +19,10 @@ describe('localization utils', () => {
       code: 'fr',
       name: 'French',
     },
+    {
+      code: 'nl',
+      name: 'Dutch',
+    },
   ];
 
   it('should throw an error if localization is attempted without initializing i18next', () =>
