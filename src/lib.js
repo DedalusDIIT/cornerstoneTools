@@ -1,6 +1,7 @@
 import BaseTool from './tools/base/BaseTool.js';
 import BaseAnnotationTool from './tools/base/BaseAnnotationTool.js';
 import BaseBrushTool from './tools/base/BaseBrushTool.js';
+import BaseMeasurementTool from './tools/base/BaseMeasurementTool.js';
 
 import {
   anyHandlesOutsideImage,
@@ -17,7 +18,7 @@ import {
   findHandleDataNearImagePoint,
   moveAnnotation,
 } from './util/findAndMoveHelpers.js';
-
+import { formatLenght } from './util/formatMeasurement.js';
 import mixins from './mixins/index.js';
 import * as cursors from './tools/cursors/index.js';
 
@@ -94,6 +95,7 @@ export const lib = {
   'base/BaseTool': BaseTool,
   'base/BaseAnnotationTool': BaseAnnotationTool,
   'base/BaseBrushTool': BaseBrushTool,
+  'base/BaseMeasurementTool': BaseMeasurementTool,
 
   'tools/cursors/MouseCursor': MouseCursor,
   'tools/cursors': cursors,
@@ -171,6 +173,7 @@ export const lib = {
   'util/wait': wait,
   'util/waitForEnabledElementImageToLoad': waitForEnabledElementImageToLoad,
   'util/getKeyPressData': getKeyPressData,
+  'util/formatMeasurement': formatLenght,
 
   // Whole tool specific util packages
   'util/ellipseUtils': ellipseUtils,
