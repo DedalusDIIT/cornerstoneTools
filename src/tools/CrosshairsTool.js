@@ -55,6 +55,8 @@ export default class CrosshairsTool extends BaseTool {
     const toolData = getToolState(element, this.name);
 
     if (!toolData) {
+      console.log('no tooldata');
+
       return;
     }
 
@@ -77,6 +79,8 @@ export default class CrosshairsTool extends BaseTool {
       !sourceImagePlane.columnPixelSpacing ||
       !sourceImagePlane.rowPixelSpacing
     ) {
+      console.log('missing information from imagePlane', sourceImagePlane);
+
       return;
     }
 
