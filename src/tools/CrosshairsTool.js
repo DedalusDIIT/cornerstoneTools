@@ -36,6 +36,14 @@ export default class CrosshairsTool extends BaseTool {
     this.touchDragCallback = this._chooseLocation.bind(this);
   }
 
+  mergeOptions(options) {
+    super.mergeOptions(options);
+
+    if (options.toolCallback) {
+      this.toolCallback = options.toolCallback;
+    }
+  }
+
   _chooseLocation(evt) {
     const eventData = evt.detail;
     const { element } = eventData;
@@ -61,7 +69,14 @@ export default class CrosshairsTool extends BaseTool {
       sourceImageId
     );
 
-    if (!sourceImagePlane) {
+    if (
+      !sourceImagePlane ||
+      !sourceImagePlane.rowCosines ||
+      !sourceImagePlane.columnCosines ||
+      !sourceImagePlane.imagePositionPatient ||
+      !sourceImagePlane.columnPixelSpacing ||
+      !sourceImagePlane.rowPixelSpacing
+    ) {
       return;
     }
 
@@ -79,7 +94,7 @@ export default class CrosshairsTool extends BaseTool {
     const enabledElements = syncContext.getSourceElements();
 
     // Iterate over each synchronized element
-    enabledElements.forEach(function(targetElement) {
+    enabledElements.forEach(targetElement => {
       // Don't do anything if the target is the same as the source
       if (targetElement === sourceElement) {
         return;
@@ -163,16 +178,19 @@ export default class CrosshairsTool extends BaseTool {
         }
 
         loader.then(
-          function(image) {
+          image => {
             const viewport = external.cornerstone.getViewport(targetElement);
 
             stackData.currentImageIdIndex = newImageIdIndex;
             external.cornerstone.displayImage(targetElement, image, viewport);
+
+            this.toolCallback(targetElement, image.imageId, newImageIdIndex);
+
             if (endLoadingHandler) {
               endLoadingHandler(targetElement, image);
             }
           },
-          function(error) {
+          error => {
             const imageId = stackData.imageIds[newImageIdIndex];
 
             if (errorLoadingHandler) {
