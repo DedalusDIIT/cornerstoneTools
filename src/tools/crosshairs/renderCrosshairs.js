@@ -4,14 +4,14 @@ import { draw, drawLine } from './../../drawing/index.js';
 import { projectPatientPointToImagePlane } from '../../util/pointProjector.js';
 
 /**
- * Renders the active reference line.
+ * Renders the livesync crosshairs.
  *
  * @export @public @method
  * @name renderCrosshairs
  * @param  {Object} context        The canvas context.
  * @param  {Object} eventData      The data associated with the event.
- * @param  {HTMLElement} targetElement    The element on which to render the reference line.
- * @param  {HTMLElement} referenceElement The element referenced by the line.
+ * @param  {HTMLElement} targetElement
+ * @param  {HTMLElement} referenceElement
  * @returns {void}
  */
 export default function(
@@ -83,7 +83,6 @@ export default function(
     referenceImagePlane
   );
 
-  // Const color = toolColors.getActiveColor();
   const color = '#A8D7FD';
 
   // Draw the referenceLines

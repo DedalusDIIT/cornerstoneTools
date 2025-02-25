@@ -242,13 +242,19 @@ export default class CrosshairsTool extends BaseTool {
       ).canvas;
       const enabledElementContext = getNewContext(enabledElementCanvas);
 
-      // Render it
-      this.renderer(
-        enabledElementContext,
-        eventData,
-        evt.currentTarget,
-        referenceEnabledElement,
-        this.mainPatientPoint
+      referenceEnabledElement.addEventListener(
+        external.cornerstone.EVENTS.IMAGE_RENDERED,
+        renderEvt => {
+          // Render it
+          this.renderer(
+            enabledElementContext,
+            eventData,
+            renderEvt.currentTarget,
+            referenceEnabledElement,
+            this.mainPatientPoint
+          );
+        },
+        { once: true }
       );
     });
   }
