@@ -88,18 +88,60 @@ export default function(
   // Draw the referenceLines
   context.setTransform(1, 0, 0, 1, 0, 0);
 
-  const line1Start = { x: projectedPatientPoint.x, y: 0 };
-  const line1End = { x: projectedPatientPoint.x, y: referenceImage.height };
-  const line2Start = { x: 0, y: projectedPatientPoint.y };
-  const line2End = { x: referenceImage.width, y: projectedPatientPoint.y };
+  const verticalLine1Start = { x: projectedPatientPoint.x, y: 0 };
+  const verticalLine1End = {
+    x: projectedPatientPoint.x,
+    y: projectedPatientPoint.y - 15,
+  };
+  const verticalLine2Start = {
+    x: projectedPatientPoint.x,
+    y: projectedPatientPoint.y + 15,
+  };
+  const verticalLine2End = {
+    x: projectedPatientPoint.x,
+    y: referenceImage.height,
+  };
+  const horizontalLine1Start = { x: 0, y: projectedPatientPoint.y };
+  const horizontalLine1End = {
+    x: projectedPatientPoint.x - 15,
+    y: projectedPatientPoint.y,
+  };
+  const horizontalLine2Start = {
+    x: projectedPatientPoint.x + 15,
+    y: projectedPatientPoint.y,
+  };
+  const horizontalLine2End = {
+    x: referenceImage.width,
+    y: projectedPatientPoint.y,
+  };
 
   draw(context, context => {
-    drawLine(context, referenceElement, line1Start, line1End, {
+    drawLine(context, referenceElement, verticalLine1Start, verticalLine1End, {
       color,
     });
 
-    drawLine(context, referenceElement, line2Start, line2End, {
+    drawLine(context, referenceElement, verticalLine2Start, verticalLine2End, {
       color,
     });
+
+    drawLine(
+      context,
+      referenceElement,
+      horizontalLine1Start,
+      horizontalLine1End,
+      {
+        color,
+      }
+    );
+
+    drawLine(
+      context,
+      referenceElement,
+      horizontalLine2Start,
+      horizontalLine2End,
+      {
+        color,
+      }
+    );
   });
 }
