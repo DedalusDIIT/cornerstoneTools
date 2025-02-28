@@ -99,7 +99,6 @@ export default class CrosshairsTool extends BaseTool {
     );
 
     this.mainPatientPoint = patientPoint;
-    console.log('log _chooseLocation');
 
     // Get the enabled elements associated with this synchronization context
     this.synchronizationContext = toolData.data[0].synchronizationContext;
@@ -215,8 +214,6 @@ export default class CrosshairsTool extends BaseTool {
   }
 
   renderToolData(evt) {
-    console.log('log renderToolData');
-
     const eventData = evt.detail;
 
     // No renderer or synch context? Adios
@@ -245,6 +242,10 @@ export default class CrosshairsTool extends BaseTool {
       referenceEnabledElement.addEventListener(
         external.cornerstone.EVENTS.IMAGE_RENDERED,
         renderEvt => {
+          if (this.mode === 'disabled') {
+            return;
+          }
+
           // Render it
           this.renderer(
             enabledElementContext,
