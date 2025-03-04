@@ -41,7 +41,6 @@ export default class CrosshairsTool extends BaseTool {
     this.touchDragCallback = this._chooseLocation.bind(this);
     this.renderer = this.configuration.renderer;
     this.synchronizationContext = null;
-    this.projectedPatientPoint = null;
     this.mainPatientPoint = null;
   }
 

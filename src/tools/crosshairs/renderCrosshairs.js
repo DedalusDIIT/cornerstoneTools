@@ -85,7 +85,7 @@ export default function(
 
   const color = '#A8D7FD';
 
-  // Draw the referenceLines
+  // Draw the crosshairs
   context.setTransform(1, 0, 0, 1, 0, 0);
 
   const verticalLine1Start = { x: projectedPatientPoint.x, y: 0 };
