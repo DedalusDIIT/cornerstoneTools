@@ -152,10 +152,6 @@ export default class CrosshairsTool extends BaseTool {
         }
       });
 
-      if (newImageIdIndex === stackData.currentImageIdIndex) {
-        return;
-      }
-
       // Switch the loaded image to the required image
       if (
         newImageIdIndex !== -1 &&
