@@ -225,6 +225,8 @@ export default class CrosshairsTool extends BaseTool {
       context
     );
     enabledElements.forEach(referenceEnabledElement => {
+      const evtCurrentTarget = evt.currentTarget;
+
       // Don't draw ourselves
       if (referenceEnabledElement === evt.currentTarget) {
         return;
@@ -236,7 +238,7 @@ export default class CrosshairsTool extends BaseTool {
 
       referenceEnabledElement.addEventListener(
         external.cornerstone.EVENTS.IMAGE_RENDERED,
-        renderEvt => {
+        () => {
           if (this.mode === 'disabled') {
             return;
           }
@@ -245,7 +247,7 @@ export default class CrosshairsTool extends BaseTool {
           this.renderer(
             enabledElementContext,
             eventData,
-            renderEvt.currentTarget,
+            evtCurrentTarget,
             referenceEnabledElement,
             this.mainPatientPoint
           );
