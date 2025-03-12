@@ -110,6 +110,32 @@ export default class CrosshairsTool extends BaseTool {
         return;
       }
 
+      const targetImage = external.cornerstone.getEnabledElement(targetElement)
+        .image;
+      const sourceImage = external.cornerstone.getEnabledElement(sourceElement)
+        .image;
+
+      if (!targetImage || !sourceImage) {
+        return;
+      }
+
+      const targetImagePlane = external.cornerstone.metaData.get(
+        'imagePlaneModule',
+        targetImage.imageId
+      );
+      const sourceImagePlane = external.cornerstone.metaData.get(
+        'imagePlaneModule',
+        sourceImage.imageId
+      );
+
+      // The image planes must be in the same frame of reference
+      if (
+        targetImagePlane.frameOfReferenceUID !==
+        sourceImagePlane.frameOfReferenceUID
+      ) {
+        return;
+      }
+
       let minDistance = Number.MAX_VALUE;
       let newImageIdIndex = -1;
 
