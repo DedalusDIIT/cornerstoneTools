@@ -88,60 +88,113 @@ export default function(
   // Draw the crosshairs
   context.setTransform(1, 0, 0, 1, 0, 0);
 
-  const verticalLine1Start = { x: projectedPatientPoint.x, y: 0 };
-  const verticalLine1End = {
-    x: projectedPatientPoint.x,
-    y: projectedPatientPoint.y - 15,
+  const boundaryCoordinates = {
+    x: Math.max(0, Math.min(referenceImage.width, projectedPatientPoint.x)),
+    y: Math.max(0, Math.min(referenceImage.height, projectedPatientPoint.y)),
   };
-  const verticalLine2Start = {
-    x: projectedPatientPoint.x,
-    y: projectedPatientPoint.y + 15,
-  };
-  const verticalLine2End = {
-    x: projectedPatientPoint.x,
-    y: referenceImage.height,
-  };
-  const horizontalLine1Start = { x: 0, y: projectedPatientPoint.y };
-  const horizontalLine1End = {
-    x: projectedPatientPoint.x - 15,
-    y: projectedPatientPoint.y,
-  };
-  const horizontalLine2Start = {
-    x: projectedPatientPoint.x + 15,
-    y: projectedPatientPoint.y,
-  };
-  const horizontalLine2End = {
-    x: referenceImage.width,
-    y: projectedPatientPoint.y,
-  };
+
+  const gapSize = 15;
+
+  // Calculate vertical line segments with boundary checks
+  let verticalLine1Start,
+    verticalLine1End,
+    verticalLine2Start,
+    verticalLine2End;
+
+  if (boundaryCoordinates.y - gapSize > 0) {
+    verticalLine1Start = { x: boundaryCoordinates.x, y: 0 };
+    verticalLine1End = {
+      x: boundaryCoordinates.x,
+      y: boundaryCoordinates.y - gapSize,
+    };
+  } else {
+    verticalLine1Start = verticalLine1End = null;
+  }
+
+  if (boundaryCoordinates.y + gapSize < referenceImage.height) {
+    verticalLine2Start = {
+      x: boundaryCoordinates.x,
+      y: boundaryCoordinates.y + gapSize,
+    };
+    verticalLine2End = { x: boundaryCoordinates.x, y: referenceImage.height };
+  } else {
+    verticalLine2Start = verticalLine2End = null;
+  }
+
+  // Calculate horizontal line segments with boundary checks
+  let horizontalLine1Start,
+    horizontalLine1End,
+    horizontalLine2Start,
+    horizontalLine2End;
+
+  if (boundaryCoordinates.x - gapSize > 0) {
+    horizontalLine1Start = { x: 0, y: boundaryCoordinates.y };
+    horizontalLine1End = {
+      x: boundaryCoordinates.x - gapSize,
+      y: boundaryCoordinates.y,
+    };
+  } else {
+    horizontalLine1Start = horizontalLine1End = null;
+  }
+
+  if (boundaryCoordinates.x + gapSize < referenceImage.width) {
+    horizontalLine2Start = {
+      x: boundaryCoordinates.x + gapSize,
+      y: boundaryCoordinates.y,
+    };
+    horizontalLine2End = { x: referenceImage.width, y: boundaryCoordinates.y };
+  } else {
+    horizontalLine2Start = horizontalLine2End = null;
+  }
 
   draw(context, context => {
-    drawLine(context, referenceElement, verticalLine1Start, verticalLine1End, {
-      color,
-    });
+    // Only draw lines if their endpoints are valid
+    if (verticalLine1Start && verticalLine1End) {
+      drawLine(
+        context,
+        referenceElement,
+        verticalLine1Start,
+        verticalLine1End,
+        {
+          color,
+        }
+      );
+    }
 
-    drawLine(context, referenceElement, verticalLine2Start, verticalLine2End, {
-      color,
-    });
+    if (verticalLine2Start && verticalLine2End) {
+      drawLine(
+        context,
+        referenceElement,
+        verticalLine2Start,
+        verticalLine2End,
+        {
+          color,
+        }
+      );
+    }
 
-    drawLine(
-      context,
-      referenceElement,
-      horizontalLine1Start,
-      horizontalLine1End,
-      {
-        color,
-      }
-    );
+    if (horizontalLine1Start && horizontalLine1End) {
+      drawLine(
+        context,
+        referenceElement,
+        horizontalLine1Start,
+        horizontalLine1End,
+        {
+          color,
+        }
+      );
+    }
 
-    drawLine(
-      context,
-      referenceElement,
-      horizontalLine2Start,
-      horizontalLine2End,
-      {
-        color,
-      }
-    );
+    if (horizontalLine2Start && horizontalLine2End) {
+      drawLine(
+        context,
+        referenceElement,
+        horizontalLine2Start,
+        horizontalLine2End,
+        {
+          color,
+        }
+      );
+    }
   });
 }
