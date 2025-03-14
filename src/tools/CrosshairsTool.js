@@ -11,6 +11,8 @@ import { imagePointToPatientPoint } from '../util/pointProjector.js';
 import convertToVector3 from '../util/convertToVector3.js';
 import { setToolOptions } from '../toolOptions.js';
 import { crosshairsCursor } from './cursors/index.js';
+import getNewContext from '../drawing/getNewContext.js';
+import renderCrosshairs from './crosshairs/renderCrosshairs.js';
 
 /**
  * @public
@@ -27,6 +29,9 @@ export default class CrosshairsTool extends BaseTool {
       name: 'Crosshairs',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       svgCursor: crosshairsCursor,
+      configuration: {
+        renderer: renderCrosshairs,
+      },
     };
 
     super(props, defaultProps);
@@ -34,6 +39,9 @@ export default class CrosshairsTool extends BaseTool {
     this.preMouseDownCallback = this._chooseLocation.bind(this);
     this.mouseDragCallback = this._chooseLocation.bind(this);
     this.touchDragCallback = this._chooseLocation.bind(this);
+    this.renderer = this.configuration.renderer;
+    this.synchronizationContext = null;
+    this.mainPatientPoint = null;
   }
 
   mergeOptions(options) {
@@ -89,14 +97,42 @@ export default class CrosshairsTool extends BaseTool {
       sourceImagePlane
     );
 
+    this.mainPatientPoint = patientPoint;
+
     // Get the enabled elements associated with this synchronization context
-    const syncContext = toolData.data[0].synchronizationContext;
-    const enabledElements = syncContext.getSourceElements();
+    this.synchronizationContext = toolData.data[0].synchronizationContext;
+    const enabledElements = this.synchronizationContext.getSourceElements();
 
     // Iterate over each synchronized element
     enabledElements.forEach(targetElement => {
       // Don't do anything if the target is the same as the source
       if (targetElement === sourceElement) {
+        return;
+      }
+
+      const targetImage = external.cornerstone.getEnabledElement(targetElement)
+        .image;
+      const sourceImage = external.cornerstone.getEnabledElement(sourceElement)
+        .image;
+
+      if (!targetImage || !sourceImage) {
+        return;
+      }
+
+      const targetImagePlane = external.cornerstone.metaData.get(
+        'imagePlaneModule',
+        targetImage.imageId
+      );
+      const sourceImagePlane = external.cornerstone.metaData.get(
+        'imagePlaneModule',
+        sourceImage.imageId
+      );
+
+      // The image planes must be in the same frame of reference
+      if (
+        targetImagePlane.frameOfReferenceUID !==
+        sourceImagePlane.frameOfReferenceUID
+      ) {
         return;
       }
 
@@ -141,10 +177,6 @@ export default class CrosshairsTool extends BaseTool {
           newImageIdIndex = index;
         }
       });
-
-      if (newImageIdIndex === stackData.currentImageIdIndex) {
-        return;
-      }
 
       // Switch the loaded image to the required image
       if (
@@ -199,6 +231,55 @@ export default class CrosshairsTool extends BaseTool {
           }
         );
       }
+    });
+  }
+
+  renderToolData(evt) {
+    const eventData = evt.detail;
+
+    // No renderer or synch context? Adios
+    if (!this.renderer || !this.synchronizationContext) {
+      return;
+    }
+
+    // Get the enabled elements associated with this synchronization context and draw them
+    const enabledElements = this.synchronizationContext.getSourceElements();
+    const context = getNewContext(eventData.canvasContext.canvas);
+
+    external.cornerstone.setToPixelCoordinateSystem(
+      eventData.enabledElement,
+      context
+    );
+    enabledElements.forEach(referenceEnabledElement => {
+      const evtCurrentTarget = evt.currentTarget;
+
+      // Don't draw ourselves
+      if (referenceEnabledElement === evt.currentTarget) {
+        return;
+      }
+      const enabledElementCanvas = external.cornerstone.getEnabledElement(
+        referenceEnabledElement
+      ).canvas;
+      const enabledElementContext = getNewContext(enabledElementCanvas);
+
+      referenceEnabledElement.addEventListener(
+        external.cornerstone.EVENTS.IMAGE_RENDERED,
+        () => {
+          if (this.mode === 'disabled') {
+            return;
+          }
+
+          // Render it
+          this.renderer(
+            enabledElementContext,
+            eventData,
+            evtCurrentTarget,
+            referenceEnabledElement,
+            this.mainPatientPoint
+          );
+        },
+        { once: true }
+      );
     });
   }
 
