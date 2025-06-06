@@ -3,6 +3,7 @@ import getUltraSoundPixelSpacing from './getUltraSoundPixelSpacing';
 import getProjectionRadiographPixelSpacing from './getProjectionRadiographPixelSpacing';
 
 export default function getPixelSpacing(image, measurementData) {
+  console.log('getPixelSpacing');
   const imagePlane = external.cornerstone.metaData.get(
     'imagePlaneModule',
     image.imageId

@@ -158,6 +158,13 @@ import {
   setElementToolStateManager,
   getElementToolStateManager,
 } from './stateManagement/toolState.js';
+import {
+  calibratedImagesMap,
+  setImageCalibrationFactor,
+  getImageCalibrationFactor,
+  clearImageCalibrationFactor,
+  clearAllImageCalibrationFactors,
+} from './tools/pixel-calibration/calibratedImagesMap.js';
 import { default as textStyle } from './stateManagement/textStyle.js';
 import { default as toolStyle } from './stateManagement/toolStyle.js';
 import { default as toolColors } from './stateManagement/toolColors.js';
@@ -282,6 +289,11 @@ const cornerstoneTools = {
   clearToolState,
   setElementToolStateManager,
   getElementToolStateManager,
+  calibratedImagesMap,
+  setImageCalibrationFactor,
+  getImageCalibrationFactor,
+  clearImageCalibrationFactor,
+  clearAllImageCalibrationFactors,
   textStyle,
   toolStyle,
   toolColors,
@@ -390,6 +402,11 @@ export {
   clearToolState,
   setElementToolStateManager,
   getElementToolStateManager,
+  calibratedImagesMap,
+  setImageCalibrationFactor,
+  getImageCalibrationFactor,
+  clearImageCalibrationFactor,
+  clearAllImageCalibrationFactors,
   textStyle,
   toolStyle,
   toolColors,
