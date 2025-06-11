@@ -139,7 +139,7 @@ describe('getPixelSpacing', () => {
     expect(result).toEqual({
       rowPixelSpacing: 50,
       colPixelSpacing: 100,
-      unit: 'mm (man)',
+      unit: 'mm_man',
     });
   });
 });

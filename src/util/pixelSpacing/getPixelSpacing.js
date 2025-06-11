@@ -55,19 +55,23 @@ const isProjection = imagePlane => {
 };
 
 const getPixelSpacingAndUnit = obj => {
-  const rowPixelSpacing =
-    (obj.rowPixelSpacing || obj.rowImagePixelSpacing) *
-    (obj.calibrationFactor || 1);
-  const colPixelSpacing =
-    (obj.columnPixelSpacing || obj.colImagePixelSpacing) *
-    (obj.calibrationFactor || 1);
+  const baseRowPixelSpacing = obj.rowPixelSpacing || obj.rowImagePixelSpacing;
+  const baseColPixelSpacing =
+    obj.columnPixelSpacing || obj.colImagePixelSpacing;
+
+  const rowPixelSpacing = baseRowPixelSpacing
+    ? baseRowPixelSpacing * (obj.calibrationFactor || 1)
+    : baseRowPixelSpacing;
+  const colPixelSpacing = baseColPixelSpacing
+    ? baseColPixelSpacing * (obj.calibrationFactor || 1)
+    : baseColPixelSpacing;
   const hasPixelSpacing = rowPixelSpacing && colPixelSpacing;
   const hasCalibrationFactor = obj.calibrationFactor;
 
   let unit = 'pix';
 
   if (hasCalibrationFactor && hasPixelSpacing) {
-    unit = 'mm (man)';
+    unit = 'mm_man';
   } else if (hasPixelSpacing) {
     unit = 'mm';
   }
