@@ -66,7 +66,8 @@ const getPixelSpacingAndUnit = obj => {
     ? baseColPixelSpacing * (obj.calibrationFactor || 1)
     : baseColPixelSpacing;
   const hasPixelSpacing = rowPixelSpacing && colPixelSpacing;
-  const hasCalibrationFactor = obj.calibrationFactor;
+  const hasCalibrationFactor =
+    obj.calibrationFactor && obj.calibrationFactor !== 1;
 
   let unit = 'pix';
 

@@ -10,5 +10,6 @@
   "mm": "mm",
   "mm_prj": "mm (pry)",
   "mm_est": "mm (pry/est)",
-  "mm_approx": "mm (aprox)"
+  "mm_approx": "mm (aprox)",
+  "mm_man": "mm (man)"
 }
