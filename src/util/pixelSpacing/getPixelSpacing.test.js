@@ -119,4 +119,27 @@ describe('getPixelSpacing', () => {
 
     expect(getProjectionRadiographPixelSpacing).toHaveBeenCalledTimes(1);
   });
+
+  it('should return calibrated rowPixelSpacing and colPixelSpacing from imagePlane if calibration factor is present', () => {
+    const image = {
+      imageId: 'imageId',
+      rowPixelSpacing: 2,
+      columnPixelSpacing: 3,
+    };
+
+    external.cornerstone.metaData.get = jest.fn();
+    external.cornerstone.metaData.get.mockReturnValue({
+      rowPixelSpacing: 10,
+      columnPixelSpacing: 20,
+      calibrationFactor: 5,
+    });
+
+    const result = getPixelSpacing(image, null);
+
+    expect(result).toEqual({
+      rowPixelSpacing: 50,
+      colPixelSpacing: 100,
+      unit: 'mm_man',
+    });
+  });
 });
