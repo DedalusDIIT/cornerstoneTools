@@ -54,6 +54,14 @@ const isProjection = imagePlane => {
   return projectionRadiographSOPClassUIDs.includes(sopClassUid);
 };
 
+const determineUnit = (hasPixelSpacing, hasCalibrationFactor) => {
+  if (hasCalibrationFactor) {
+    return 'mm_man';
+  }
+
+  return hasPixelSpacing ? 'mm' : 'pix';
+};
+
 const getPixelSpacingAndUnit = obj => {
   const baseRowPixelSpacing = obj.rowPixelSpacing || obj.rowImagePixelSpacing;
   const baseColPixelSpacing =
@@ -61,21 +69,15 @@ const getPixelSpacingAndUnit = obj => {
 
   const rowPixelSpacing = baseRowPixelSpacing
     ? baseRowPixelSpacing * (obj.calibrationFactor || 1)
-    : baseRowPixelSpacing;
+    : obj.calibrationFactor;
   const colPixelSpacing = baseColPixelSpacing
     ? baseColPixelSpacing * (obj.calibrationFactor || 1)
-    : baseColPixelSpacing;
+    : obj.calibrationFactor;
   const hasPixelSpacing = rowPixelSpacing && colPixelSpacing;
   const hasCalibrationFactor =
     obj.calibrationFactor && obj.calibrationFactor !== 1;
 
-  let unit = 'pix';
-
-  if (hasCalibrationFactor && hasPixelSpacing) {
-    unit = 'mm_man';
-  } else if (hasPixelSpacing) {
-    unit = 'mm';
-  }
+  const unit = determineUnit(hasPixelSpacing, hasCalibrationFactor);
 
   return {
     rowPixelSpacing,
