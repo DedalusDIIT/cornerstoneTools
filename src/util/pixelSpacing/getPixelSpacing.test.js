@@ -143,7 +143,7 @@ describe('getPixelSpacing', () => {
     });
   });
 
-  it('should return pix_man units if pixel spacing is not present and calibration factor is present', () => {
+  it('should return calibration factor as pixel spacing and mm_man units if pixel spacing is not present and calibration factor is present', () => {
     const image = {
       imageId: 'imageId',
     };
@@ -156,9 +156,9 @@ describe('getPixelSpacing', () => {
     const result = getPixelSpacing(image, null);
 
     expect(result).toEqual({
-      colPixelSpacing: undefined,
-      rowPixelSpacing: undefined,
-      unit: 'pix_man',
+      colPixelSpacing: 5,
+      rowPixelSpacing: 5,
+      unit: 'mm_man',
     });
   });
 });
