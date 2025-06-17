@@ -142,4 +142,23 @@ describe('getPixelSpacing', () => {
       unit: 'mm_man',
     });
   });
+
+  it('should return pix_man units if pixel spacing is not present and calibration factor is present', () => {
+    const image = {
+      imageId: 'imageId',
+    };
+
+    external.cornerstone.metaData.get = jest.fn();
+    external.cornerstone.metaData.get.mockReturnValue({
+      calibrationFactor: 5,
+    });
+
+    const result = getPixelSpacing(image, null);
+
+    expect(result).toEqual({
+      colPixelSpacing: undefined,
+      rowPixelSpacing: undefined,
+      unit: 'pix_man',
+    });
+  });
 });
