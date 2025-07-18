@@ -161,4 +161,46 @@ describe('getPixelSpacing', () => {
       unit: 'mm_man',
     });
   });
+
+  it('should return pix units when calibration was reset on the FIRST calibration', () => {
+    const image = { imageId: 'imageId' };
+
+    external.cornerstone.metaData.get = jest.fn();
+    external.cornerstone.metaData.get.mockReturnValue({
+      rowPixelSpacing: 10,
+      columnPixelSpacing: 20,
+      calibrationFactor: 1,
+      calibrationReset: true,
+      isFirstCalibration: true,
+    });
+
+    const result = getPixelSpacing(image, null);
+
+    expect(result).toEqual({
+      rowPixelSpacing: 10,
+      colPixelSpacing: 20,
+      unit: 'pix',
+    });
+  });
+
+  it('should return mm_man units when calibration was reset AFTER at least one previous calibration', () => {
+    const image = { imageId: 'imageId' };
+
+    external.cornerstone.metaData.get = jest.fn();
+    external.cornerstone.metaData.get.mockReturnValue({
+      rowPixelSpacing: 10,
+      columnPixelSpacing: 20,
+      calibrationFactor: 1,
+      calibrationReset: true,
+      isFirstCalibration: false,
+    });
+
+    const result = getPixelSpacing(image, null);
+
+    expect(result).toEqual({
+      rowPixelSpacing: 10,
+      colPixelSpacing: 20,
+      unit: 'mm_man',
+    });
+  });
 });
