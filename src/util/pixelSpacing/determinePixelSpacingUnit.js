@@ -7,7 +7,7 @@
  * @param {string} baseUnit - The base unit when no calibration is applied
  * @returns {string} The appropriate unit
  */
-export const determineUnit = (
+export const determinePixelSpacingUnit = (
   hasPixelSpacing,
   hasCalibrationFactor,
   calibrationReset,

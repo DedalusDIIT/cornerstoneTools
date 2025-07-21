@@ -116,4 +116,67 @@ describe('getProjectionRadiographPixelSpacing', () => {
       unit: 'pix',
     });
   });
+
+  it('should return calibrated rowPixelSpacing and colPixelSpacing from imagePlane if calibration factor is present', () => {
+    const imagePlane = {
+      imagerPixelSpacing: [0.2, 0.2],
+      calibrationFactor: 4,
+    };
+
+    const result = getProjectionRadiographPixelSpacing(imagePlane);
+
+    expect(result).toEqual({
+      rowPixelSpacing: 0.8,
+      colPixelSpacing: 0.8,
+      unit: 'mm_man',
+    });
+  });
+
+  it('should return undefined pixel spacing and pix units when pixel spacing is missing but calibration factor exists', () => {
+    const imagePlane = {
+      calibrationFactor: 4,
+    };
+
+    const result = getProjectionRadiographPixelSpacing(imagePlane, null);
+
+    expect(result).toEqual({
+      colPixelSpacing: undefined,
+      rowPixelSpacing: undefined,
+      unit: 'pix',
+    });
+  });
+
+  it('should return pix units when calibration was reset on the FIRST calibration', () => {
+    const imagePlane = {
+      imagerPixelSpacing: [10, 20],
+      calibrationFactor: 1,
+      calibrationReset: true,
+      isFirstCalibration: true,
+    };
+
+    const result = getProjectionRadiographPixelSpacing(imagePlane, null);
+
+    expect(result).toEqual({
+      rowPixelSpacing: 10,
+      colPixelSpacing: 20,
+      unit: 'pix',
+    });
+  });
+
+  it('should return mm_man units when calibration was reset AFTER at least one previous calibration', () => {
+    const imagePlane = {
+      imagerPixelSpacing: [10, 20],
+      calibrationFactor: 1,
+      calibrationReset: true,
+      isFirstCalibration: false,
+    };
+
+    const result = getProjectionRadiographPixelSpacing(imagePlane, null);
+
+    expect(result).toEqual({
+      rowPixelSpacing: 10,
+      colPixelSpacing: 20,
+      unit: 'mm_man',
+    });
+  });
 });

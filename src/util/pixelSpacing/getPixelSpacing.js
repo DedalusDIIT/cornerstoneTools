@@ -1,7 +1,7 @@
 import external from '../../externalModules';
 import getUltraSoundPixelSpacing from './getUltraSoundPixelSpacing';
 import getProjectionRadiographPixelSpacing from './getProjectionRadiographPixelSpacing';
-import { determineUnit } from './determinePixelSpacingUnit';
+import { determinePixelSpacingUnit } from './determinePixelSpacingUnit';
 
 export default function getPixelSpacing(image, measurementData) {
   const imagePlane = external.cornerstone.metaData.get(
@@ -70,7 +70,7 @@ const getPixelSpacingAndUnit = obj => {
   const hasCalibrationFactor =
     obj.calibrationFactor && obj.calibrationFactor !== 1;
 
-  const unit = determineUnit(
+  const unit = determinePixelSpacingUnit(
     hasPixelSpacing,
     hasCalibrationFactor,
     obj.calibrationReset,

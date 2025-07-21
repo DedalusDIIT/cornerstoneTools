@@ -1,4 +1,4 @@
-import { determineUnit } from './determinePixelSpacingUnit';
+import { determinePixelSpacingUnit } from './determinePixelSpacingUnit';
 
 /**
  * The logic of this code is based on the DICOM standard part 3, section 10.7,
@@ -23,7 +23,7 @@ export default function getProjectionRadiographPixelSpacing(imagePlane) {
   // Unit is mm_prj (projective)
   // **************************************************************
   if (pixelSpacing.length > 0 && imagerPixelSpacing.length === 0) {
-    const unit = determineUnit(
+    const unit = determinePixelSpacingUnit(
       true,
       hasCalibrationFactor,
       imagePlane.calibrationReset,
@@ -58,7 +58,7 @@ export default function getProjectionRadiographPixelSpacing(imagePlane) {
     // object of known size at known depth within the patient.
     // Unit is mm_approx (approximate)
     // **************************************************************
-    const unit = determineUnit(
+    const unit = determinePixelSpacingUnit(
       true,
       hasCalibrationFactor,
       imagePlane.calibrationReset,
@@ -105,7 +105,7 @@ const getProjectivePixelSpacing = imagePlane => {
     ? 'mm_est'
     : 'mm_prj';
 
-  const unit = determineUnit(
+  const unit = determinePixelSpacingUnit(
     true,
     hasCalibrationFactor,
     imagePlane.calibrationReset,
