@@ -203,4 +203,121 @@ describe('getPixelSpacing', () => {
       unit: 'mm_man',
     });
   });
+
+  it('scales column spacing when displayed columns differ from stored columns', () => {
+    const image = {
+      imageId: 'imageId',
+      columns: 50,
+      rows: 100,
+    };
+
+    external.cornerstone.metaData.get = jest.fn();
+    external.cornerstone.metaData.get.mockImplementation(type => {
+      if (type === 'imagePlaneModule') {
+        return {
+          rowPixelSpacing: 1,
+          columnPixelSpacing: 2,
+        };
+      }
+
+      if (type === 'sopCommonModule') {
+        return null;
+      }
+
+      if (type === 'rows') {
+        return {
+          rows: 100,
+          columns: 100,
+        };
+      }
+
+      return null;
+    });
+
+    const result = getPixelSpacing(image, null);
+
+    expect(result).toEqual({
+      rowPixelSpacing: 1,
+      colPixelSpacing: 4,
+      unit: 'mm',
+    });
+  });
+
+  it('scales row spacing when displayed rows differ from stored rows', () => {
+    const image = {
+      imageId: 'imageId',
+      columns: 100,
+      rows: 50,
+    };
+
+    external.cornerstone.metaData.get = jest.fn();
+    external.cornerstone.metaData.get.mockImplementation(type => {
+      if (type === 'imagePlaneModule') {
+        return {
+          rowPixelSpacing: 2,
+          columnPixelSpacing: 4,
+        };
+      }
+
+      if (type === 'sopCommonModule') {
+        return null;
+      }
+
+      if (type === 'rows') {
+        return {
+          rows: 100,
+          columns: 100,
+        };
+      }
+
+      return null;
+    });
+
+    const result = getPixelSpacing(image, null);
+
+    expect(result).toEqual({
+      rowPixelSpacing: 4,
+      colPixelSpacing: 4,
+      unit: 'mm',
+    });
+  });
+
+  it('scales both row and column spacing when both dimensions differ', () => {
+    const image = {
+      imageId: 'imageId',
+      columns: 50,
+      rows: 25,
+    };
+
+    external.cornerstone.metaData.get = jest.fn();
+    external.cornerstone.metaData.get.mockImplementation(type => {
+      if (type === 'imagePlaneModule') {
+        return {
+          rowPixelSpacing: 2,
+          columnPixelSpacing: 3,
+        };
+      }
+
+      if (type === 'sopCommonModule') {
+        return null;
+      }
+
+      if (type === 'rows') {
+        return {
+          rows: 100,
+          columns: 100,
+        };
+      }
+
+      return null;
+    });
+
+    const result = getPixelSpacing(image, null);
+
+    expect(result).toEqual({
+      rowPixelSpacing: 8,
+      colPixelSpacing: 6,
+      unit: 'mm',
+    });
+  });
 });

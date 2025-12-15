@@ -4,6 +4,71 @@ import getProjectionRadiographPixelSpacing from './getProjectionRadiographPixelS
 import { determinePixelSpacingUnit } from './determinePixelSpacingUnit';
 
 export default function getPixelSpacing(image, measurementData) {
+  const pixelSpacing = getBasicPixelSpacing(image, measurementData);
+  return getCorrectedPixelSpacing(pixelSpacing, image);
+}
+
+const getCorrectedPixelSpacing = (pixelSpacing, image) => {
+  if (!pixelSpacing) {
+    return pixelSpacing;
+  }
+
+  const { rowPixelSpacing, colPixelSpacing, unit } = pixelSpacing;
+
+  if (!hasValue(rowPixelSpacing) || !hasValue(colPixelSpacing)) {
+    return pixelSpacing;
+  }
+
+  const storedSize = external.cornerstone.metaData.get('rows', image.imageId);
+
+  const storedColumns = storedSize && storedSize.columns;
+  const storedRows = storedSize && storedSize.rows;
+  const displayColumns = image && image.columns;
+  const displayRows = image && image.rows;
+
+  if (
+    !canScalePixelSpacing(
+      storedColumns,
+      storedRows,
+      displayColumns,
+      displayRows
+    )
+  ) {
+    return pixelSpacing;
+  }
+
+  const imageRatioX = displayColumns / storedColumns;
+  const imageRatioY = displayRows / storedRows;
+
+  if (!isFinite(imageRatioX) || !isFinite(imageRatioY)) {
+    return pixelSpacing;
+  }
+
+  return {
+    rowPixelSpacing: rowPixelSpacing / imageRatioY,
+    colPixelSpacing: colPixelSpacing / imageRatioX,
+    unit,
+  };
+};
+
+const hasValue = value => value !== undefined && value !== null;
+
+const canScalePixelSpacing = (
+  storedColumns,
+  storedRows,
+  displayColumns,
+  displayRows
+) =>
+  hasValue(storedColumns) &&
+  hasValue(storedRows) &&
+  hasValue(displayColumns) &&
+  hasValue(displayRows) &&
+  isFinite(storedColumns) &&
+  isFinite(storedRows) &&
+  isFinite(displayColumns) &&
+  isFinite(displayRows);
+
+const getBasicPixelSpacing = (image, measurementData) => {
   const imagePlane = external.cornerstone.metaData.get(
     'imagePlaneModule',
     image.imageId
@@ -35,7 +100,7 @@ export default function getPixelSpacing(image, measurementData) {
   }
 
   return getPixelSpacingAndUnit(image);
-}
+};
 
 const isProjection = imagePlane => {
   const { sopClassUid } = imagePlane;
