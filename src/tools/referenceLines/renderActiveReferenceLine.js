@@ -4,6 +4,16 @@ import toolColors from './../../stateManagement/toolColors.js';
 import convertToVector3 from './../../util/convertToVector3.js';
 import { draw, drawLine } from './../../drawing/index.js';
 
+function getSafeRatio(numerator, denominator) {
+  if (!numerator || !denominator) {
+    return 1;
+  }
+
+  const ratio = numerator / denominator;
+
+  return Number.isFinite(ratio) ? ratio : 1;
+}
+
 /**
  * Renders the active reference line.
  *
@@ -98,6 +108,18 @@ export default function(context, eventData, targetElement, referenceElement) {
   }
 
   const color = toolColors.getActiveColor();
+  const ratioX = getSafeRatio(targetImage.columns, targetImagePlane.columns);
+  const ratioY = getSafeRatio(targetImage.rows, targetImagePlane.rows);
+  const adjustedReferenceLine = {
+    start: {
+      x: referenceLine.start.x * ratioX,
+      y: referenceLine.start.y * ratioY,
+    },
+    end: {
+      x: referenceLine.end.x * ratioX,
+      y: referenceLine.end.y * ratioY,
+    },
+  };
 
   // Draw the referenceLines
   context.setTransform(1, 0, 0, 1, 0, 0);
@@ -106,8 +128,8 @@ export default function(context, eventData, targetElement, referenceElement) {
     drawLine(
       context,
       eventData.element,
-      referenceLine.start,
-      referenceLine.end,
+      adjustedReferenceLine.start,
+      adjustedReferenceLine.end,
       { color }
     );
   });
