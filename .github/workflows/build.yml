@@ -10,20 +10,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [14.18]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 16.18
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+          node-version: 16.18
+          cache: npm
       - name: Determine package version
         id: pkg
         run: |
@@ -32,10 +27,10 @@ jobs:
       - name: Ensure version tag is new
         env:
           TAG: v${{ steps.pkg.outputs.version }}
+          REPO: https://github.com/${{ github.repository }}.git
         run: |
-          git fetch --tags --force
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
-            echo "Tag $TAG already exists. Update package version before building." >&2
+          if git ls-remote --tags --refs "$REPO" "refs/tags/$TAG" | grep -q "refs/tags/$TAG$"; then
+            echo "Tag $TAG already exists in this repository. Update package version before building." >&2
             exit 1
           fi
       - run: npm ci
