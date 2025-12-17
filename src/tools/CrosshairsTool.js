@@ -9,6 +9,7 @@ import {
 } from '../stateManagement/toolState.js';
 import { imagePointToPatientPoint } from '../util/pointProjector.js';
 import convertToVector3 from '../util/convertToVector3.js';
+import { getSafeRatio, getImageDimension } from '../util/imageMath.js';
 import { setToolOptions } from '../toolOptions.js';
 import { crosshairsCursor } from './cursors/index.js';
 import getNewContext from '../drawing/getNewContext.js';
@@ -92,8 +93,23 @@ export default class CrosshairsTool extends BaseTool {
     const sourceImagePoint = eventData.currentPoints.image;
 
     // Transfer this to a patientPoint given imagePlane metadata
+    const sourceImage = sourceEnabledElement.image;
+
+    if (!sourceImage) {
+      return;
+    }
+
+    const sourceColumns = getImageDimension(sourceImage, 'columns', 'width');
+    const sourceRows = getImageDimension(sourceImage, 'rows', 'height');
+    const ratioX = getSafeRatio(sourceColumns, sourceImagePlane.columns);
+    const ratioY = getSafeRatio(sourceRows, sourceImagePlane.rows);
+    const adjustedImagePoint = {
+      x: sourceImagePoint.x / ratioX,
+      y: sourceImagePoint.y / ratioY,
+    };
+
     const patientPoint = imagePointToPatientPoint(
-      sourceImagePoint,
+      adjustedImagePoint,
       sourceImagePlane
     );
 
@@ -111,8 +127,6 @@ export default class CrosshairsTool extends BaseTool {
       }
 
       const targetImage = external.cornerstone.getEnabledElement(targetElement)
-        .image;
-      const sourceImage = external.cornerstone.getEnabledElement(sourceElement)
         .image;
 
       if (!targetImage || !sourceImage) {
@@ -165,6 +179,7 @@ export default class CrosshairsTool extends BaseTool {
         }
 
         const imagePosition = convertToVector3(imagePlane.imagePositionPatient);
+
         const row = convertToVector3(imagePlane.rowCosines);
         const column = convertToVector3(imagePlane.columnCosines);
         const normal = column.clone().cross(row.clone());

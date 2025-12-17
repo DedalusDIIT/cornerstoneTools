@@ -2,17 +2,8 @@ import external from './../../externalModules.js';
 import calculateReferenceLine from './calculateReferenceLine.js';
 import toolColors from './../../stateManagement/toolColors.js';
 import convertToVector3 from './../../util/convertToVector3.js';
+import { getSafeRatio } from './../../util/imageMath.js';
 import { draw, drawLine } from './../../drawing/index.js';
-
-function getSafeRatio(numerator, denominator) {
-  if (!numerator || !denominator) {
-    return 1;
-  }
-
-  const ratio = numerator / denominator;
-
-  return Number.isFinite(ratio) ? ratio : 1;
-}
 
 /**
  * Renders the active reference line.
