@@ -1,17 +1,8 @@
 import external from './../../externalModules.js';
 import convertToVector3 from './../../util/convertToVector3.js';
+import { getSafeRatio } from './../../util/imageMath.js';
 import { draw, drawLine } from './../../drawing/index.js';
 import { projectPatientPointToImagePlane } from '../../util/pointProjector.js';
-
-function getSafeRatio(numerator, denominator) {
-  if (!numerator || !denominator) {
-    return 1;
-  }
-
-  const ratio = numerator / denominator;
-
-  return Number.isFinite(ratio) ? ratio : 1;
-}
 
 /**
  * Renders the livesync crosshairs.

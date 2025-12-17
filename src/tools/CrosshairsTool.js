@@ -9,36 +9,11 @@ import {
 } from '../stateManagement/toolState.js';
 import { imagePointToPatientPoint } from '../util/pointProjector.js';
 import convertToVector3 from '../util/convertToVector3.js';
+import { getSafeRatio, getImageDimension } from '../util/imageMath.js';
 import { setToolOptions } from '../toolOptions.js';
 import { crosshairsCursor } from './cursors/index.js';
 import getNewContext from '../drawing/getNewContext.js';
 import renderCrosshairs from './crosshairs/renderCrosshairs.js';
-
-function getSafeRatio(numerator, denominator) {
-  if (!numerator || !denominator) {
-    return 1;
-  }
-
-  const ratio = numerator / denominator;
-
-  return Number.isFinite(ratio) ? ratio : 1;
-}
-
-function getImageDimension(image, primaryKey, fallbackKey) {
-  if (!image) {
-    return undefined;
-  }
-
-  if (typeof image[primaryKey] === 'number') {
-    return image[primaryKey];
-  }
-
-  if (fallbackKey && typeof image[fallbackKey] === 'number') {
-    return image[fallbackKey];
-  }
-
-  return undefined;
-}
 
 /**
  * @public
