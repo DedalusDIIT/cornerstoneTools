@@ -14,6 +14,32 @@ import { crosshairsCursor } from './cursors/index.js';
 import getNewContext from '../drawing/getNewContext.js';
 import renderCrosshairs from './crosshairs/renderCrosshairs.js';
 
+function getSafeRatio(numerator, denominator) {
+  if (!numerator || !denominator) {
+    return 1;
+  }
+
+  const ratio = numerator / denominator;
+
+  return Number.isFinite(ratio) ? ratio : 1;
+}
+
+function getImageDimension(image, primaryKey, fallbackKey) {
+  if (!image) {
+    return undefined;
+  }
+
+  if (typeof image[primaryKey] === 'number') {
+    return image[primaryKey];
+  }
+
+  if (fallbackKey && typeof image[fallbackKey] === 'number') {
+    return image[fallbackKey];
+  }
+
+  return undefined;
+}
+
 /**
  * @public
  * @class CrosshairsTool
@@ -92,8 +118,23 @@ export default class CrosshairsTool extends BaseTool {
     const sourceImagePoint = eventData.currentPoints.image;
 
     // Transfer this to a patientPoint given imagePlane metadata
+    const sourceImage = sourceEnabledElement.image;
+
+    if (!sourceImage) {
+      return;
+    }
+
+    const sourceColumns = getImageDimension(sourceImage, 'columns', 'width');
+    const sourceRows = getImageDimension(sourceImage, 'rows', 'height');
+    const ratioX = getSafeRatio(sourceColumns, sourceImagePlane.columns);
+    const ratioY = getSafeRatio(sourceRows, sourceImagePlane.rows);
+    const adjustedImagePoint = {
+      x: sourceImagePoint.x / ratioX,
+      y: sourceImagePoint.y / ratioY,
+    };
+
     const patientPoint = imagePointToPatientPoint(
-      sourceImagePoint,
+      adjustedImagePoint,
       sourceImagePlane
     );
 
@@ -111,8 +152,6 @@ export default class CrosshairsTool extends BaseTool {
       }
 
       const targetImage = external.cornerstone.getEnabledElement(targetElement)
-        .image;
-      const sourceImage = external.cornerstone.getEnabledElement(sourceElement)
         .image;
 
       if (!targetImage || !sourceImage) {
@@ -165,6 +204,7 @@ export default class CrosshairsTool extends BaseTool {
         }
 
         const imagePosition = convertToVector3(imagePlane.imagePositionPatient);
+
         const row = convertToVector3(imagePlane.rowCosines);
         const column = convertToVector3(imagePlane.columnCosines);
         const normal = column.clone().cross(row.clone());

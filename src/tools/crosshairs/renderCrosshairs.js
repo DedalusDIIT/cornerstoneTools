@@ -3,6 +3,16 @@ import convertToVector3 from './../../util/convertToVector3.js';
 import { draw, drawLine } from './../../drawing/index.js';
 import { projectPatientPointToImagePlane } from '../../util/pointProjector.js';
 
+function getSafeRatio(numerator, denominator) {
+  if (!numerator || !denominator) {
+    return 1;
+  }
+
+  const ratio = numerator / denominator;
+
+  return Number.isFinite(ratio) ? ratio : 1;
+}
+
 /**
  * Renders the livesync crosshairs.
  *
@@ -83,14 +93,23 @@ export default function(
     referenceImagePlane
   );
 
+  const referenceColumns = referenceImage.columns || referenceImage.width;
+  const referenceRows = referenceImage.rows || referenceImage.height;
+  const ratioX = getSafeRatio(referenceColumns, referenceImagePlane.columns);
+  const ratioY = getSafeRatio(referenceRows, referenceImagePlane.rows);
+  const adjustedPatientPoint = {
+    x: projectedPatientPoint.x * ratioX,
+    y: projectedPatientPoint.y * ratioY,
+  };
+
   const color = '#A8D7FD';
 
   // Draw the crosshairs
   context.setTransform(1, 0, 0, 1, 0, 0);
 
   const boundaryCoordinates = {
-    x: Math.max(0, Math.min(referenceImage.width, projectedPatientPoint.x)),
-    y: Math.max(0, Math.min(referenceImage.height, projectedPatientPoint.y)),
+    x: Math.max(0, Math.min(referenceColumns, adjustedPatientPoint.x)),
+    y: Math.max(0, Math.min(referenceRows, adjustedPatientPoint.y)),
   };
 
   const gapSize = 15;
@@ -111,12 +130,12 @@ export default function(
     verticalLine1Start = verticalLine1End = null;
   }
 
-  if (boundaryCoordinates.y + gapSize < referenceImage.height) {
+  if (boundaryCoordinates.y + gapSize < referenceRows) {
     verticalLine2Start = {
       x: boundaryCoordinates.x,
       y: boundaryCoordinates.y + gapSize,
     };
-    verticalLine2End = { x: boundaryCoordinates.x, y: referenceImage.height };
+    verticalLine2End = { x: boundaryCoordinates.x, y: referenceRows };
   } else {
     verticalLine2Start = verticalLine2End = null;
   }
@@ -137,12 +156,12 @@ export default function(
     horizontalLine1Start = horizontalLine1End = null;
   }
 
-  if (boundaryCoordinates.x + gapSize < referenceImage.width) {
+  if (boundaryCoordinates.x + gapSize < referenceColumns) {
     horizontalLine2Start = {
       x: boundaryCoordinates.x + gapSize,
       y: boundaryCoordinates.y,
     };
-    horizontalLine2End = { x: referenceImage.width, y: boundaryCoordinates.y };
+    horizontalLine2End = { x: referenceColumns, y: boundaryCoordinates.y };
   } else {
     horizontalLine2Start = horizontalLine2End = null;
   }
