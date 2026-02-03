@@ -3,6 +3,7 @@ import { getToolState as getToolStateMocked } from '../../stateManagement/toolSt
 import drawLinkedMocked from '../../drawing/drawCircle';
 import getNewContext from '../../drawing/getNewContext.js';
 import { getToolState } from './../../stateManagement/toolState.js';
+import getHQImage from '../../util/getHQImage';
 
 import { getLogger } from '../../util/logger.js';
 import Decimal from 'decimal.js';
@@ -49,6 +50,11 @@ jest.mock('../../drawing/getNewContext', () => ({
 }));
 
 jest.mock('./../../importInternal.js', () => ({
+  default: jest.fn(),
+}));
+
+jest.mock('../../util/getHQImage', () => ({
+  __esModule: true,
   default: jest.fn(),
 }));
 
@@ -335,6 +341,15 @@ describe('CircleRoiTool.js', () => {
         },
       };
 
+      getHQImage.mockReturnValue({
+        image,
+        hqImageId: undefined,
+      });
+      getHQImage.mockReturnValue({
+        image,
+        hqImageId: undefined,
+      });
+
       instantiatedTool.updateCachedStats(image, element, data);
       expect(data.cachedStats.area).toEqual(new Decimal(5));
       expect(data.cachedStats.areaUncertainty).toEqual(new Decimal(10));
@@ -374,6 +389,11 @@ describe('CircleRoiTool.js', () => {
       image.columnPixelSpacing = 0.1234;
       image.rowPixelSpacing = 1.123;
 
+      getHQImage.mockReturnValue({
+        image,
+        hqImageId: undefined,
+      });
+
       instantiatedTool.updateCachedStats(image, element, data);
       expect(data.cachedStats.area).toEqual(new Decimal(0.9));
       expect(data.cachedStats.areaUncertainty).toEqual(new Decimal(1.2));
@@ -400,10 +420,40 @@ describe('CircleRoiTool.js', () => {
       image.columnPixelSpacing = 0.1234;
       image.rowPixelSpacing = 1.123;
 
+      getHQImage.mockReturnValue({
+        image,
+        hqImageId: undefined,
+      });
+
       instantiatedTool.updateCachedStats(image, element, data);
 
       expect(data.cachedStats.mean).toEqual(4.5);
       expect(data.cachedStats.stdDev).toEqual(1.118);
+    });
+
+    it('should use HQ image pixel spacing for calculations when available', () => {
+      const instantiatedTool = new CircleRoiTool();
+      const hqImage = {
+        ...image,
+        rowPixelSpacing: 0.5,
+        columnPixelSpacing: 0.5,
+      };
+      const data = {
+        handles: {
+          start: { x: 3, y: 3 },
+          end: { x: 4, y: 4 },
+        },
+      };
+
+      getHQImage.mockReturnValue({
+        image: hqImage,
+        hqImageId: 'hq-image-id',
+      });
+
+      instantiatedTool.updateCachedStats(image, element, data);
+
+      expect(data.cachedStats.area).toEqual(new Decimal(0.9));
+      expect(data.cachedStats.diameter).toEqual(new Decimal(0.3));
     });
   });
 
@@ -478,6 +528,10 @@ describe('CircleRoiTool.js', () => {
         });
 
         getToolState.mockReturnValue(toolState);
+        getHQImage.mockReturnValue({
+          image: mockEvent.detail.image,
+          hqImageId: undefined,
+        });
 
         instantiatedTool.renderToolData(mockEvent);
 
@@ -495,6 +549,61 @@ describe('CircleRoiTool.js', () => {
           displayUncertainties
         );
       });
+    });
+
+    it('should calculate stats with HQ image during rendering', () => {
+      const toolState = {
+        data: [
+          {
+            invalidated: true,
+            visible: true,
+            active: false,
+            handles: {
+              start: { x: 3, y: 3 },
+              end: { x: 4, y: 4 },
+              textBox: {},
+            },
+          },
+        ],
+      };
+
+      const lqImage = {
+        ...image,
+        imageId: 'lq-image-id',
+      };
+
+      const hqImage = {
+        ...image,
+        imageId: 'hq-image-id',
+        rowPixelSpacing: 0.5,
+        columnPixelSpacing: 0.5,
+      };
+
+      const mockEvent = {
+        detail: {
+          element: {},
+          canvasContext: { canvas: {} },
+          image: lqImage,
+          viewport: {},
+        },
+        currentTarget: {},
+      };
+
+      const instantiatedTool = new CircleRoiTool();
+
+      getToolState.mockReturnValue(toolState);
+      getHQImage.mockReturnValue({
+        image: hqImage,
+        hqImageId: 'hq-image-id',
+      });
+
+      instantiatedTool.renderToolData(mockEvent);
+
+      const renderedData = toolState.data[0];
+
+      expect(renderedData.cachedStats.area).toEqual(new Decimal(2));
+      expect(renderedData.cachedStats.diameter).toEqual(new Decimal(1.4));
+      expect(renderedData.invalidated).toBe(false);
     });
   });
 
