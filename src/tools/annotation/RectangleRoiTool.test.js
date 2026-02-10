@@ -5,6 +5,7 @@ import Decimal from 'decimal.js';
 import { formatArea } from '../../util/formatMeasurement.js';
 import getNewContext from '../../drawing/getNewContext.js';
 import drawRect from '../../drawing/drawRect.js';
+import getHQImage from '../../util/getHQImage.js';
 
 /* ~ Setup
  * To mock properly, Jest needs jest.mock('moduleName') to be in the
@@ -64,6 +65,11 @@ jest.mock('../../drawing/drawLinkedTextBox', () => ({
 }));
 
 jest.mock('../../util/formatMeasurement');
+
+jest.mock('../../util/getHQImage', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
 
 const badMouseEventData = 'hello world';
 const goodMouseEventData = {
@@ -242,6 +248,11 @@ describe('RectangleRoiTool.js', () => {
         },
       };
 
+      getHQImage.mockReturnValue({
+        image,
+        hqImageId: undefined,
+      });
+
       instantiatedTool.updateCachedStats(image, element, data);
       expect(data.cachedStats.area).toEqual(new Decimal(7));
       expect(data.cachedStats.areaUncertainty).toEqual(new Decimal(14));
@@ -278,6 +289,11 @@ describe('RectangleRoiTool.js', () => {
       image.columnPixelSpacing = 0.1234;
       image.rowPixelSpacing = 1.123;
 
+      getHQImage.mockReturnValue({
+        image,
+        hqImageId: undefined,
+      });
+
       instantiatedTool.updateCachedStats(image, element, data);
       expect(data.cachedStats.area).toEqual(new Decimal(0.1));
       expect(data.cachedStats.areaUncertainty).toEqual(new Decimal(2.8));
@@ -299,9 +315,46 @@ describe('RectangleRoiTool.js', () => {
         },
       };
 
+      getHQImage.mockReturnValue({
+        image,
+        hqImageId: undefined,
+      });
+
       instantiatedTool.updateCachedStats(image, element, data);
       expect(data.cachedStats.mean).toEqual(57.6);
       expect(data.cachedStats.stdDev).toEqual(47.5);
+    });
+
+    it('should use HQ image pixel spacing for calculations when available', () => {
+      const instantiatedTool = new RectangleRoiTool();
+      const hqImage = {
+        ...image,
+        rowPixelSpacing: 0.5,
+        columnPixelSpacing: 0.5,
+      };
+      const data = {
+        handles: {
+          start: {
+            x: 0,
+            y: 0,
+          },
+          end: {
+            x: 3,
+            y: 3,
+          },
+        },
+      };
+
+      getHQImage.mockReturnValue({
+        image: hqImage,
+        hqImageId: 'hq-image-id',
+      });
+
+      instantiatedTool.updateCachedStats(image, element, data);
+
+      // With HQ pixel spacing of 0.5, area should be calculated using that spacing
+      expect(data.cachedStats.area).toEqual(new Decimal(2));
+      expect(data.cachedStats.areaUncertainty).toEqual(new Decimal(4));
     });
   });
 
@@ -384,6 +437,10 @@ describe('RectangleRoiTool.js', () => {
         });
 
         getToolState.mockReturnValueOnce(toolState);
+        getHQImage.mockReturnValue({
+          image: mockEvent.detail.image,
+          hqImageId: undefined,
+        });
 
         instantiatedTool.renderToolData(mockEvent);
 
@@ -394,6 +451,68 @@ describe('RectangleRoiTool.js', () => {
           displayUncertainties
         );
       });
+    });
+
+    it('should calculate stats with HQ image during rendering', () => {
+      const toolState = {
+        data: [
+          {
+            invalidated: true,
+            visible: true,
+            active: false,
+            handles: {
+              start: {
+                x: 0,
+                y: 0,
+              },
+              end: {
+                x: 3,
+                y: 3,
+              },
+              textBox: {},
+            },
+          },
+        ],
+      };
+
+      const lqImage = {
+        ...image,
+        imageId: 'lq-image-id',
+      };
+
+      const hqImage = {
+        ...image,
+        imageId: 'hq-image-id',
+        rowPixelSpacing: 0.5,
+        columnPixelSpacing: 0.5,
+      };
+
+      const mockEvent = {
+        detail: {
+          element: {},
+          canvasContext: { canvas: {} },
+          image: lqImage,
+          viewport: {},
+        },
+        currentTarget: {},
+      };
+
+      const instantiatedTool = new RectangleRoiTool();
+
+      getToolState.mockReturnValue(toolState);
+      getHQImage.mockReturnValue({
+        image: hqImage,
+        hqImageId: 'hq-image-id',
+      });
+
+      instantiatedTool.renderToolData(mockEvent);
+
+      // Verify stats were calculated with HQ image's pixel spacing (0.5)
+      const renderedData = toolState.data[0];
+
+      expect(renderedData.cachedStats.area).toEqual(new Decimal(2));
+      expect(renderedData.cachedStats.areaUncertainty).toEqual(new Decimal(4));
+      expect(renderedData.invalidated).toBe(false);
     });
   });
 

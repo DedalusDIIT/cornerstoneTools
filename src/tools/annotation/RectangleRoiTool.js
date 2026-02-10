@@ -20,6 +20,7 @@ import {
 import calculateSUV from './../../util/calculateSUV.js';
 import getROITextBoxCoords from '../../util/getROITextBoxCoords.js';
 import throttle from './../../util/throttle.js';
+import getHQImage from './../../util/getHQImage.js';
 import { rectangleRoiCursor } from '../cursors/index.js';
 import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/pixelSpacing/getPixelSpacing';
@@ -145,6 +146,11 @@ export default class RectangleRoiTool extends BaseMeasurementTool {
   }
 
   updateCachedStats(image, element, data) {
+    // Use HQ image if available, otherwise fall back to LQ
+    const newImageData = getHQImage(element, image);
+
+    image = newImageData.image;
+
     const seriesModule =
       external.cornerstone.metaData.get('generalSeriesModule', image.imageId) ||
       {};
@@ -156,7 +162,8 @@ export default class RectangleRoiTool extends BaseMeasurementTool {
       element,
       data.handles,
       modality,
-      pixelSpacing
+      pixelSpacing,
+      newImageData.hqImageId
     );
 
     data.cachedStats = stats;
@@ -171,7 +178,10 @@ export default class RectangleRoiTool extends BaseMeasurementTool {
     }
 
     const eventData = evt.detail;
-    const { image, element } = eventData;
+    const { element } = eventData;
+
+    // Use HQ image if available, otherwise fall back to LQ
+    const { image } = getHQImage(element, eventData.image);
     const lineWidth = toolStyle.getToolWidth();
     const lineDash = getModule('globalConfiguration').configuration.lineDash;
     const {
@@ -345,7 +355,14 @@ function _getRectangleImageCoordinates(startHandle, endHandle) {
  * @param {*} pixelSpacing
  * @returns {Object} The Stats object
  */
-function _calculateStats(image, element, handles, modality, pixelSpacing) {
+function _calculateStats(
+  image,
+  element,
+  handles,
+  modality,
+  pixelSpacing,
+  hqImageId
+) {
   // Retrieve the bounds of the rectangle in image coordinates
   const roiCoordinates = _getRectangleImageCoordinates(
     handles.start,
@@ -358,7 +375,8 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     roiCoordinates.left,
     roiCoordinates.top,
     roiCoordinates.width,
-    roiCoordinates.height
+    roiCoordinates.height,
+    { hqImageId }
   );
 
   // Calculate the mean & standard deviation from the pixels and the rectangle details

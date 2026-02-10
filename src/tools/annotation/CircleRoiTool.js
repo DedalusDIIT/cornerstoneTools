@@ -23,6 +23,7 @@ import { calculateEllipseStatistics } from './../../util/ellipse/index.js';
 import getROITextBoxCoords from '../../util/getROITextBoxCoords.js';
 import * as localization from '../../util/localization/localization.utils';
 import throttle from './../../util/throttle.js';
+import getHQImage from './../../util/getHQImage.js';
 import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/pixelSpacing/getPixelSpacing';
 import { circleRoiCursor } from '../cursors/index.js';
@@ -153,12 +154,16 @@ export default class CircleRoiTool extends BaseMeasurementTool {
     const modality = seriesModule.modality;
     const pixelSpacing = getPixelSpacing(image, data);
 
+    // Use HQ image if available, otherwise fall back to LQ
+    const newImageData = getHQImage(element, image);
+
     const stats = _calculateStats(
-      image,
+      newImageData.image,
       element,
       data.handles,
       modality,
-      pixelSpacing
+      pixelSpacing,
+      newImageData.hqImageId
     );
 
     data.cachedStats = stats;
@@ -174,7 +179,11 @@ export default class CircleRoiTool extends BaseMeasurementTool {
 
     const getDistance = external.cornerstoneMath.point.distance;
     const eventData = evt.detail;
-    const { image, element, canvasContext } = eventData;
+    const { element, canvasContext } = eventData;
+
+    // Use HQ image if available, otherwise fall back to LQ
+    const { image } = getHQImage(element, eventData.image);
+
     const lineWidth = toolStyle.getToolWidth();
     const {
       handleRadius,
@@ -534,7 +543,14 @@ function _formatLength(value, name, hasPixelSpacing) {
  * @param {*} pixelSpacing
  * @returns {Object} The Stats object
  */
-function _calculateStats(image, element, handles, modality, pixelSpacing) {
+function _calculateStats(
+  image,
+  element,
+  handles,
+  modality,
+  pixelSpacing,
+  hqImageId
+) {
   // Retrieve the bounds of the ellipse in image coordinates
   const circleCoordinates = getCircleCoords(handles.start, handles.end);
 
@@ -544,7 +560,8 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     circleCoordinates.left,
     circleCoordinates.top,
     circleCoordinates.width,
-    circleCoordinates.height
+    circleCoordinates.height,
+    { hqImageId }
   );
 
   // Calculate the mean & standard deviation from the pixels and the ellipse details.
